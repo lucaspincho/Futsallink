@@ -1,0 +1,8 @@
+# melos_managed_dependency_overrides: futsallink_core,futsallink_firebase,futsallink_ui
+dependency_overrides:
+  futsallink_core:
+    path: ..\\..\\packages\\futsallink_core
+  futsallink_firebase:
+    path: ..\\..\\packages\\futsallink_firebase
+  futsallink_ui:
+    path: ..\\..\\packages\\futsallink_ui

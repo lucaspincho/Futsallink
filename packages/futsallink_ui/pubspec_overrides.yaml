@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: futsallink_core
+dependency_overrides:
+  futsallink_core:
+    path: ..\\futsallink_core

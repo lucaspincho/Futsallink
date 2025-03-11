@@ -1,0 +1,51 @@
+name: futsallink_project
+repository: https://github.com/lucaspincho/futsallink_project
+sdkPath: auto
+
+packages:
+  - apps/**
+  - packages/**
+
+command:
+  bootstrap:
+    usePubspecOverrides: true
+    runPubGetInParallel: false
+
+scripts:
+  analyze:
+    run: |
+      melos exec -- "flutter analyze ."
+    description: Run `flutter analyze` for all packages
+
+  format:
+    run: |
+      melos exec -- "flutter format ."
+    description: Run `flutter format` for all packages
+  
+  test:
+    run: |
+      melos exec --dir-exists="test" -- "flutter test"
+    description: Run tests for all packages with test directory
+  
+  build_runner:
+    run: |
+      melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
+    description: Generate code for packages that depend on build_runner
+
+  # Novos scripts para gerenciar dependências
+  deps:solve:
+    run: |
+      melos exec -- "flutter pub get --no-example"
+    description: Resolve problemas de dependências em todos os pacotes
+    
+  deps:check:
+    run: |
+      melos exec -- "flutter pub outdated"
+    description: Verifica dependências desatualizadas
+    
+  clean:deep:
+    run: |
+      melos clean && 
+      melos exec -- "rm -rf .dart_tool" && 
+      melos exec -- "rm -f pubspec.lock"
+    description: Limpeza profunda de caches e locks

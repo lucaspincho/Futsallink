@@ -1,0 +1,124 @@
+{
+  "project_info": {
+    "project_number": "859865604977",
+    "project_id": "futsallink-project",
+    "storage_bucket": "futsallink-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859865604977:android:711bbbca361c6c78af0cd0",
+        "android_client_info": {
+          "package_name": "com.futsallink.club"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUL3X_O2jjFYZvBeD-YTdwU9j_IcSxVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859865604977:android:a2ccc7c7a73ecdaeaf0cd0",
+        "android_client_info": {
+          "package_name": "com.futsallink.club.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUL3X_O2jjFYZvBeD-YTdwU9j_IcSxVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859865604977:android:9335b71868b6585eaf0cd0",
+        "android_client_info": {
+          "package_name": "com.futsallink.player"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUL3X_O2jjFYZvBeD-YTdwU9j_IcSxVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859865604977:android:c38798e48d122061af0cd0",
+        "android_client_info": {
+          "package_name": "com.futsallink.player.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUL3X_O2jjFYZvBeD-YTdwU9j_IcSxVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859865604977:android:110d99417d234073af0cd0",
+        "android_client_info": {
+          "package_name": "com.project.futsallink_club"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUL3X_O2jjFYZvBeD-YTdwU9j_IcSxVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859865604977:android:3e5626714d5330f1af0cd0",
+        "android_client_info": {
+          "package_name": "com.project.futsallink_player"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUL3X_O2jjFYZvBeD-YTdwU9j_IcSxVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

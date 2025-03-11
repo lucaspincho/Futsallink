@@ -1,0 +1,12 @@
+name: futsallink_project
+environment:
+  sdk: ">=3.6.1 <4.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+dev_dependencies:
+  melos: ^6.3.2
+
+flutter:
+  assets:
+    - assets/logo.svg

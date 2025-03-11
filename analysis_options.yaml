@@ -1,0 +1,27 @@
+include: package:flutter_lints/flutter_lints.yaml
+
+linter:
+  rules:
+    # Style rules
+    avoid_print: true
+    prefer_single_quotes: true
+    sort_child_properties_last: true
+    use_key_in_widget_constructors: true
+    directives_ordering: true
+    
+    # Error rules
+    avoid_empty_else: true
+    avoid_relative_lib_imports: true
+    avoid_returning_null_for_future: true
+    avoid_types_as_parameter_names: true
+    empty_statements: true
+    no_duplicate_case_values: true
+    unrelated_type_equality_checks: true
+    valid_regexps: true
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    invalid_annotation_target: ignore

@@ -1,0 +1,71 @@
+plugins {
+    id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
+    id "kotlin-android"
+    // O plugin do Flutter Gradle precisa ser aplicado após os outros plugins
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+dependencies {
+    // Importa o BoM do Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+
+    // Adiciona a dependência do Firebase Authentication
+    implementation("com.google.firebase:firebase-auth")
+
+    implementation 'com.google.firebase:firebase-auth-ktx'
+}
+
+android {
+    namespace = "com.project.futsallink_player"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId = "com.futsallink_player.app"
+        minSdk = 23  // Correção aplicada
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    flavorDimensions "flavor-type" // Define uma dimensão para os flavors
+
+    productFlavors {
+        dev {
+            dimension "flavor-type"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+        }
+
+        prod {
+            dimension "flavor-type"
+            applicationIdSuffix ".prod"
+            versionNameSuffix "-prod"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.debug
+        }
+    }
+}
+
+// O plugin do Google Services deve ser aplicado **APÓS** a configuração do Gradle
+apply plugin: 'com.google.gms.google-services'
+
+flutter {
+    source = "../.."
+}
