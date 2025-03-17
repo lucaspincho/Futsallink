@@ -1,83 +1,89 @@
+// Em apps/futsallink_player/lib/core/routes.dart
+
 import 'package:flutter/material.dart';
-import '../features/auth/presentation/pages/phone_auth_screen.dart';
-import '../features/auth/presentation/pages/otp_verification_screen.dart';
-import '../features/auth/presentation/pages/login_screen.dart';
-import '../features/auth/presentation/pages/email_auth_screen.dart';
-import '../features/auth/presentation/pages/verify_email_screen.dart';
-import '../features/auth/presentation/pages/create_password_screen.dart';
-import '../features/profile/presentation/pages/profile_name_screen.dart';
-import '../features/profile/presentation/pages/profile_age_screen.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/auth_method_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/login_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/register_page.dart';
 
-class AppRoutes {
-  static const String login = '/login';
-  static const String phoneAuth = '/phone-auth';
-  static const String otpVerification = '/otp-verification';
-  static const String emailAuth = '/email-auth';
-  static const String verifyEmail = '/verify-email';
-  static const String createPassword = '/create-password';
-  static const String profileName = '/profile-name';
-  static const String profileAge = '/profile-age';
+// Rotas da aplicação
+final Map<String, WidgetBuilder> appRoutes = {
+  // Autenticação
+  '/': (context) => const AuthMethodPage(),
+  '/auth-method': (context) => const AuthMethodPage(),
+  '/login': (context) => const LoginPage(),
+  '/phone-verification': (context) => const RegisterPage(),
+  
+  // Outras rotas da aplicação
+  '/home': (context) => const Scaffold(body: Center(child: Text('Home Page'))),
+  // Adicione outras rotas aqui
+};
 
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case login:
-        return _materialRoute(LoginScreen()); // ❌ Removido o 'const'
-
-      case phoneAuth:
-        return _materialRoute(PhoneAuthScreen()); // ❌ Removido o 'const'
-
-      case otpVerification:
-        if (settings.arguments is String) {
-          return _materialRoute(
-            OTPVerificationScreen(verificationId: settings.arguments as String),
-          );
-        }
-        return _errorRoute();
-
-      case emailAuth:
-        return _materialRoute(EmailAuthScreen()); // ❌ Removido o 'const'
-
-      case verifyEmail:
-        if (settings.arguments is String) {
-          return _materialRoute(
-            VerifyEmailScreen(email: settings.arguments as String),
-          );
-        }
-        return _errorRoute();
-
-      case createPassword:
-        if (settings.arguments is String) {
-          return _materialRoute(
-            CreatePasswordScreen(email: settings.arguments as String),
-          );
-        }
-        return _errorRoute();
-
-      case profileName:
-        return _materialRoute(ProfileNameScreen()); // ❌ Removido o 'const'
-
-      case profileAge:
-        return _materialRoute(ProfileAgeScreen()); // ❌ Removido o 'const'
-
-      default:
-        return _errorRoute();
-    }
-  }
-
-  static MaterialPageRoute _materialRoute(Widget page) {
-    return MaterialPageRoute(builder: (_) => page);
-  }
-
-  static Route<dynamic> _errorRoute() {
-    return MaterialPageRoute(
-      builder: (_) => Scaffold(
-        body: Center(
-          child: Text(
-            "Rota não encontrada",
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-        ),
+// Páginas temporárias para compilação
+class VerificationCodePage extends StatelessWidget {
+  final String verificationId;
+  final String phoneNumber;
+  
+  const VerificationCodePage({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Página de Verificação de Código - $phoneNumber'),
       ),
     );
+  }
+}
+
+class CreatePasswordPage extends StatelessWidget {
+  final String phoneNumber;
+  
+  const CreatePasswordPage({Key? key, required this.phoneNumber}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Página de Criação de Senha - $phoneNumber'),
+      ),
+    );
+  }
+}
+
+// Gerenciador de rotas para lidar com rotas que precisam de parâmetros
+class AppRouter {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/verification-code':
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => VerificationCodePage(
+            verificationId: args['verificationId'],
+            phoneNumber: args['phoneNumber'],
+          ),
+        );
+        
+      case '/create-password':
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => CreatePasswordPage(
+            phoneNumber: args['phoneNumber'],
+          ),
+        );
+        
+      default:
+        if (appRoutes.containsKey(settings.name)) {
+          return MaterialPageRoute(
+            builder: appRoutes[settings.name]!,
+          );
+        }
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(
+              child: Text('Rota não encontrada: ${settings.name}'),
+            ),
+          ),
+        );
+    }
   }
 }

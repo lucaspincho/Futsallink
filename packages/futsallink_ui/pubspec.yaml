@@ -30,3 +30,25 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   dartdoc: ^6.2.2
+
+# Adicionando configuração da fonte
+flutter:
+  fonts:
+    - family: Unbounded
+      fonts:
+        - asset: ../../assets/fonts/Unbounded-Regular.ttf
+          weight: 400
+        - asset: ../../assets/fonts/Unbounded-Light.ttf
+          weight: 300
+        - asset: ../../assets/fonts/Unbounded-ExtraLight.ttf
+          weight: 200
+        - asset: ../../assets/fonts/Unbounded-Medium.ttf
+          weight: 500
+        - asset: ../../assets/fonts/Unbounded-SemiBold.ttf
+          weight: 600
+        - asset: ../../assets/fonts/Unbounded-Bold.ttf
+          weight: 700
+        - asset: ../../assets/fonts/Unbounded-ExtraBold.ttf
+          weight: 800
+        - asset: ../../assets/fonts/Unbounded-Black.ttf
+          weight: 900

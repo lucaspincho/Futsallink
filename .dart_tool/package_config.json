@@ -122,6 +122,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "mask_text_input_formatter",
+      "rootUri": "file:///C:/Users/Lucas/AppData/Local/Pub/Cache/hosted/pub.dev/mask_text_input_formatter-2.9.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "material_color_utilities",
       "rootUri": "file:///C:/Users/Lucas/AppData/Local/Pub/Cache/hosted/pub.dev/material_color_utilities-0.11.1",
       "packageUri": "lib/",
@@ -260,7 +266,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-03-09T20:21:46.338352Z",
+  "generated": "2025-03-17T20:10:14.477608Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///C:/Users/Lucas/FlutterFolder/flutter",

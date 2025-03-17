@@ -1,11 +1,8 @@
 import 'flavors.dart';
 
 class AppConfig {
-  static late Flavor appFlavor;
-
-  static void initialize(Flavor flavor) {
-    appFlavor = flavor;
-  }
+  
+  static Flavor get appFlavor => FlavorConfig.instance.flavor;
 
   static bool get isDevelopment => appFlavor == Flavor.development;
   static bool get isProduction => appFlavor == Flavor.production;
@@ -29,11 +26,7 @@ class AppConfig {
   }
 
   static String get firebaseProjectId {
-    switch (appFlavor) {
-      case Flavor.development:
-        return "futsallink-dev";
-      case Flavor.production:
-        return "futsallink-prod";
-    }
+    // Corrigir para usar o ID real do projeto
+    return "futsallink-project";
   }
 }

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/pages/login_page.dart';
+import 'core/di/injection_container.dart';
 import 'core/routes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/config/app_config.dart';
@@ -11,16 +15,23 @@ class FutsallinkPlayerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: AppConfig.appName, // ✅ Agora usa o nome correto
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Color(0xFF0E1A2A),
-        textTheme: GoogleFonts.unboundedTextTheme(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => sl<AuthBloc>(),
+        ),
+        // Adicione outros BlocProviders aqui
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: AppConfig.appName,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Color(0xFF0E1A2A),
+        ),
+        initialRoute: '/login', // Usando string direta ao invés de AppRoutes
+        onGenerateRoute: AppRouter.generateRoute,
       ),
-      initialRoute: AppRoutes.login, // ✅ Definindo login como a primeira tela
-      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

@@ -12,7 +12,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_fonts: ^6.1.0
+  google_fonts: ^4.0.4
+  cloud_firestore: ^5.6.5
+  pin_code_fields: ^8.0.1
 
   # Local packages
   futsallink_core:
@@ -24,6 +26,7 @@ dependencies:
 
     # State management
   flutter_bloc: ^9.0.0
+  bloc: ^9.0.0
 
   # Dependency injection
   get_it: ^8.0.3
@@ -48,14 +51,18 @@ dependencies:
   flutter_local_notifications: ^18.0.1
 
   # Others
+  firebase_auth: ^5.5.1
+  equatable: ^2.0.7
   url_launcher: ^6.1.14
-  permission_handler: ^10.4.3
+  permission_handler: ^11.4.0
   package_info_plus: ^4.1.0
   device_info_plus: ^9.0.3
   connectivity_plus: ^4.0.2
   flutter_flavor: ^3.1.1
   share_plus: ^7.1.0
   timeago: ^3.5.0
+  dartz: ^0.10.1
+  mask_text_input_formatter: ^2.9.0
 
 dev_dependencies:
   flutter_test:
@@ -71,9 +78,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/
-    - assets/icons/
-    - assets/animations/
+    - ../../assets/images/
+    - ../../assets/icons/
+    - ../../assets/animations/
   
 # flutter_native_splash:
 #   color: "#212121"

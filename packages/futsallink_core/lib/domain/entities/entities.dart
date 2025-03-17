@@ -6,3 +6,4 @@ export 'video.dart';
 export 'tryout.dart';
 export 'message.dart';
 export 'chat.dart';
+export 'auth_credential.dart';

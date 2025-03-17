@@ -1,0 +1,2 @@
+C:/Users/Lucas/futsallink_project/apps/futsallink_player/android/app/.cxx/Debug/2f2r6i1e/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Lucas/futsallink_project/apps/futsallink_player/android/app/.cxx/Debug/2f2r6i1e/arm64-v8a/CMakeFiles/rebuild_cache.dir

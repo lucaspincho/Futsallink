@@ -13,7 +13,7 @@ import 'package:futsallink_player/core/config/flavors.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp(flavor: Flavor.development));
+    await tester.pumpWidget(const FutsallinkPlayerApp(flavor: Flavor.development));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -1,4 +1,4 @@
-export 'auth/sign_in_with_email.dart';
+export 'auth_usecases.dart';
 
 export 'player/get_player.dart';
 export 'player/search_players.dart';

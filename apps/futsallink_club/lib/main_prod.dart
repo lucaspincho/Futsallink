@@ -15,5 +15,5 @@ void main() async {
   
   FlavorConfig(flavor: Flavor.production);
   
-  runApp(const FutsallinkClubApp());
+  runApp(const FutsallinkClubApp(flavor: Flavor.production));
 }

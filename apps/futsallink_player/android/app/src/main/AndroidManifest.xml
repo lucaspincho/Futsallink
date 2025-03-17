@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.futsallink.player">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     
     <!-- Permissões necessárias para Firebase Authentication -->
     <uses-permission android:name="android.permission.INTERNET" />

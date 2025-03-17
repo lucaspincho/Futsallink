@@ -49,3 +49,21 @@ scripts:
       melos exec -- "rm -rf .dart_tool" && 
       melos exec -- "rm -f pubspec.lock"
     description: Limpeza profunda de caches e locks
+
+  # Scripts para o app Player
+  player:dev:
+    description: "Executar o app Futsallink Player no modo de desenvolvimento"
+    run: cd apps/futsallink_player && flutter run --flavor dev -t lib/main_dev.dart
+  
+  player:prod:
+    description: "Executar o app Futsallink Player no modo de produção"
+    run: cd apps/futsallink_player && flutter run --flavor prod -t lib/main_prod.dart
+  
+  # Scripts para o app Club
+  club:dev:
+    description: "Executar o app Futsallink Club no modo de desenvolvimento"
+    run: cd apps/futsallink_club && flutter run --flavor dev -t lib/main_dev.dart
+  
+  club:prod:
+    description: "Executar o app Futsallink Club no modo de produção"
+    run: cd apps/futsallink_club && flutter run --flavor prod -t lib/main_prod.dart

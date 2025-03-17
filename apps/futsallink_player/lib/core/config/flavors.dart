@@ -1,5 +1,3 @@
-// Em apps/futsallink_player/lib/core/config/flavors.dart
-
 enum Flavor {
   development,
   production,
