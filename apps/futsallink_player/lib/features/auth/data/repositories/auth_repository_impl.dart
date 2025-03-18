@@ -139,35 +139,38 @@ class AuthRepositoryImpl implements AuthRepository {
         ));
       }
       
-      // Verificar se telefone já está registrado
-      final isRegistered = await _authService.isPhoneRegistered(phoneNumber);
-      if (isRegistered) {
-        return Left(AuthFailure(message: 'Este telefone já está registrado. Tente fazer login.'));
-      }
+      // Usar o novo método de fluxo completo para iniciar a verificação de telefone
+      final verificationResult = await _authService.initiatePhoneVerificationFlow(phoneNumber);
       
-      String? verificationIdResult;
       // Definir um timeout de 2 minutos para o código (120 segundos)
       final codeExpiration = DateTime.now().add(const Duration(minutes: 2));
       
-      await _authService.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (_) {},
-        verificationFailed: (e) {
-          throw e;
-        },
-        codeSent: (String verificationId, _) {
-          verificationIdResult = verificationId;
-        },
-        codeAutoRetrievalTimeout: (_) {},
-      );
+      // Se foi auto-verificado (raro, acontece em alguns dispositivos Android)
+      if (verificationResult['autoVerified'] == true) {
+        final credential = verificationResult['credential'] as firebase_auth.PhoneAuthCredential;
+        
+        // Fazer login com a credencial
+        final userCredential = await _authService.signInWithPhoneAuthCredential(credential);
+        
+        return Right(AuthCredential(
+          uid: userCredential.user?.uid,
+          phoneNumber: userCredential.user?.phoneNumber,
+          isVerified: true,
+          authMethod: AuthMethod.phone,
+          verificationStatus: VerificationStatus.codeVerified,
+        ));
+      }
       
-      if (verificationIdResult == null) {
+      // Caso normal - código SMS enviado para o usuário
+      final verificationId = verificationResult['verificationId'] as String?;
+      
+      if (verificationId == null) {
         return Left(AuthFailure(message: 'Falha ao enviar código de verificação'));
       }
       
       return Right(AuthCredential(
         phoneNumber: phoneNumber,
-        verificationId: verificationIdResult,
+        verificationId: verificationId,
         authMethod: AuthMethod.phone,
         codeExpiration: codeExpiration,
         verificationStatus: VerificationStatus.pendingCodeVerification,
@@ -238,10 +241,10 @@ class AuthRepositoryImpl implements AuthRepository {
         'email': credential.email ?? '',
         'phoneNumber': credential.phoneNumber ?? '',
         'profileType': 'player', // Valor padrão para o app Player
-        'createdAt': now,
-        'updatedAt': now,
+        'createdAt': Timestamp.fromDate(now),
+        'updatedAt': Timestamp.fromDate(now),
         'isActive': true,
-        'lastLoginAt': now,
+        'lastLoginAt': Timestamp.fromDate(now),
         'deviceTokens': [],
       };
       
@@ -284,10 +287,10 @@ class AuthRepositoryImpl implements AuthRepository {
         'email': credential.email ?? '',
         'phoneNumber': credential.phoneNumber ?? '',
         'profileType': 'player', // Valor padrão para o app Player
-        'createdAt': now,
-        'updatedAt': now,
+        'createdAt': Timestamp.fromDate(now),
+        'updatedAt': Timestamp.fromDate(now),
         'isActive': true,
-        'lastLoginAt': now,
+        'lastLoginAt': Timestamp.fromDate(now),
         'deviceTokens': [],
       };
       
@@ -399,4 +402,102 @@ class AuthRepositoryImpl implements AuthRepository {
         (user) => user,
       );
     });
+  
+  @override
+  Future<Either<Failure, bool>> resetPasswordViaEmail(String email) async {
+    try {
+      // Verificar se o email está registrado
+      final isRegisteredResult = await isEmailRegistered(email);
+      final isRegistered = isRegisteredResult.getOrElse(() => false);
+      
+      if (!isRegistered) {
+        return Left(AuthFailure(message: 'Este email não está cadastrado em nossa plataforma.'));
+      }
+      
+      // Enviar email de redefinição de senha
+      await _authService.sendPasswordResetEmail(email);
+      return const Right(true);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Left(AuthFailure(message: e.message ?? 'Falha ao enviar email de redefinição'));
+    } catch (e) {
+      return Left(AuthFailure(message: e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, AuthCredential>> resetPasswordViaPhone(String phoneNumber) async {
+    try {
+      // Verificar se o telefone está registrado
+      final isRegisteredResult = await isPhoneRegistered(phoneNumber);
+      final isRegistered = isRegisteredResult.getOrElse(() => false);
+      
+      if (!isRegistered) {
+        return Left(AuthFailure(message: 'Este número de telefone não está cadastrado em nossa plataforma.'));
+      }
+      
+      // Iniciar processo de verificação de telefone para redefinição de senha
+      final credential = await _authService.initiatePasswordResetByPhone(phoneNumber);
+      
+      // Se o credential for null, o código foi enviado para o usuário
+      if (credential == null) {
+        return Right(AuthCredential(
+          phoneNumber: phoneNumber,
+          isVerified: false,
+        ));
+      }
+      
+      // Se chegamos aqui, a verificação foi concluída automaticamente (Android)
+      return Right(AuthCredential(
+        phoneNumber: phoneNumber,
+        isVerified: true,
+      ));
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Left(AuthFailure(message: e.message ?? 'Falha ao iniciar redefinição de senha via telefone'));
+    } catch (e) {
+      return Left(AuthFailure(message: e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, AuthCredential>> verifyPasswordResetCode(String verificationId, String code) async {
+    try {
+      // Criar credencial de autenticação por telefone
+      final credential = firebase_auth.PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: code,
+      );
+      
+      // Utilizar o SignInWithCredential para verificar o código
+      await _authService.signInWithPhoneAuthCredential(credential);
+      
+      // Se chegamos aqui, o código é válido
+      return Right(AuthCredential(
+        isVerified: true,
+        verificationId: verificationId,
+      ));
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Left(AuthFailure(message: e.message ?? 'Falha ao verificar código'));
+    } catch (e) {
+      return Left(AuthFailure(message: e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, bool>> confirmPasswordReset(String newPassword, {String? verificationCode}) async {
+    try {
+      // Se temos um código de verificação, é uma redefinição via email
+      if (verificationCode != null) {
+        await _authService.confirmPasswordReset(verificationCode, newPassword);
+      } else {
+        // Se não temos um código, é uma redefinição via telefone (já autenticado)
+        await _authService.updatePasswordForCurrentUser(newPassword);
+      }
+      
+      return const Right(true);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Left(AuthFailure(message: e.message ?? 'Falha ao redefinir senha'));
+    } catch (e) {
+      return Left(AuthFailure(message: e.toString()));
+    }
+  }
 }

@@ -170,6 +170,50 @@ class ResetPasswordUseCase {
   }
 }
 
+// UseCase para redefinição de senha via email
+class ResetPasswordViaEmailUseCase {
+  final AuthRepository repository;
+
+  ResetPasswordViaEmailUseCase(this.repository);
+
+  Future<Either<Failure, bool>> call(String email) {
+    return repository.resetPasswordViaEmail(email);
+  }
+}
+
+// UseCase para enviar código de redefinição de senha via telefone
+class ResetPasswordViaPhoneUseCase {
+  final AuthRepository repository;
+
+  ResetPasswordViaPhoneUseCase(this.repository);
+
+  Future<Either<Failure, AuthCredential>> call(String phoneNumber) {
+    return repository.resetPasswordViaPhone(phoneNumber);
+  }
+}
+
+// UseCase para verificar código de redefinição de senha via telefone
+class VerifyPasswordResetCodeUseCase {
+  final AuthRepository repository;
+
+  VerifyPasswordResetCodeUseCase(this.repository);
+
+  Future<Either<Failure, AuthCredential>> call(String verificationId, String code) {
+    return repository.verifyPasswordResetCode(verificationId, code);
+  }
+}
+
+// UseCase para confirmar a redefinição de senha (definir nova senha)
+class ConfirmPasswordResetUseCase {
+  final AuthRepository repository;
+
+  ConfirmPasswordResetUseCase(this.repository);
+
+  Future<Either<Failure, bool>> call(String newPassword, {String? verificationCode}) {
+    return repository.confirmPasswordReset(newPassword, verificationCode: verificationCode);
+  }
+}
+
 class UpdatePasswordUseCase {
   final AuthRepository _repository;
 

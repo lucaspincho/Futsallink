@@ -101,66 +101,6 @@ class AuthService {
     }
   }
   
-  // Método para iniciar verificação por email (cria usuário temporário)
-  Future<void> initiateEmailVerification(String email) async {
-    try {
-      // Criar uma senha temporária aleatória
-      final tempPassword = _generateRandomPassword();
-      
-      // Tentar criar usuário com senha temporária
-      final credential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: tempPassword,
-      );
-      
-      // Enviar email de verificação
-      if (credential.user != null) {
-        await credential.user!.sendEmailVerification();
-      } else {
-        throw FirebaseAuthException(
-          code: 'user-creation-failed',
-          message: 'Falha ao criar usuário temporário.',
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        // Se o email já está em uso, verificar se é verificado
-        final methods = await _auth.fetchSignInMethodsForEmail(email);
-        if (methods.isEmpty) {
-          throw FirebaseAuthException(
-            code: 'email-already-in-use',
-            message: 'Este email já está em uso e não foi verificado. Tente outro email.',
-          );
-        } else {
-          throw FirebaseAuthException(
-            code: 'email-already-in-use',
-            message: 'Este email já está registrado. Por favor, faça login.',
-          );
-        }
-      }
-      throw _handleFirebaseAuthException(e);
-    } catch (e) {
-      throw FirebaseAuthException(
-        code: 'verification-failed',
-        message: 'Falha ao iniciar verificação: ${e.toString()}',
-      );
-    }
-  }
-  
-  // Método para verificar status de verificação de email
-  Future<bool> checkEmailVerified() async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        await user.reload(); // Recarrega os dados do usuário
-        return user.emailVerified;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-  
   // Método de login com telefone - primeira etapa
   Future<void> verifyPhoneNumber({
     required String phoneNumber,
@@ -188,6 +128,72 @@ class AuthService {
         );
       }
       rethrow;
+    }
+  }
+  
+  // Método para iniciar verificação com telefone (método melhorado para uso com repository)
+  Future<Map<String, dynamic>> initiatePhoneVerificationFlow(String phoneNumber) async {
+    try {
+      // Verificar se o número já está registrado antes
+      final isRegistered = await isPhoneRegistered(phoneNumber);
+      if (isRegistered) {
+        throw FirebaseAuthException(
+          code: 'phone-already-in-use',
+          message: 'Este número de telefone já está registrado. Por favor, faça login.',
+        );
+      }
+      
+      // Criar um completer para usar com o verifyPhoneNumber que é assíncrono
+      final Completer<Map<String, dynamic>> completer = Completer<Map<String, dynamic>>();
+      String? verificationId;
+      int? resendToken;
+      
+      await _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) {
+          // Auto verificação completada (em alguns dispositivos Android)
+          if (!completer.isCompleted) {
+            completer.complete({
+              'credential': credential, 
+              'verificationId': verificationId,
+              'autoVerified': true,
+            });
+          }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          // Falha na verificação
+          if (!completer.isCompleted) {
+            completer.completeError(_handleFirebaseAuthException(e));
+          }
+        },
+        codeSent: (String vId, int? token) {
+          // Código enviado para o telefone do usuário
+          verificationId = vId;
+          resendToken = token;
+          if (!completer.isCompleted) {
+            completer.complete({
+              'verificationId': vId,
+              'resendToken': token,
+              'autoVerified': false,
+            });
+          }
+        },
+        codeAutoRetrievalTimeout: (String vId) {
+          verificationId = vId;
+        },
+        timeout: const Duration(seconds: 60),
+      );
+      
+      // Retornar o resultado
+      return completer.future;
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        rethrow;
+      }
+      throw FirebaseAuthException(
+        code: 'phone-verification-failed',
+        message: 'Falha na verificação do telefone: ${e.toString()}',
+      );
     }
   }
   
@@ -317,5 +323,190 @@ class AuthService {
       credential: e.credential,
       tenantId: e.tenantId,
     );
+  }
+  
+  // Método para iniciar verificação por email (cria usuário temporário)
+  Future<void> initiateEmailVerification(String email) async {
+    try {
+      // Criar uma senha temporária aleatória
+      final tempPassword = _generateRandomPassword();
+      
+      // Tentar criar usuário com senha temporária
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: tempPassword,
+      );
+      
+      // Enviar email de verificação
+      if (credential.user != null) {
+        await credential.user!.sendEmailVerification();
+      } else {
+        throw FirebaseAuthException(
+          code: 'user-creation-failed',
+          message: 'Falha ao criar usuário temporário.',
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        // Se o email já está em uso, verificar se é verificado
+        final methods = await _auth.fetchSignInMethodsForEmail(email);
+        if (methods.isEmpty) {
+          throw FirebaseAuthException(
+            code: 'email-already-in-use',
+            message: 'Este email já está em uso e não foi verificado. Tente outro email.',
+          );
+        } else {
+          throw FirebaseAuthException(
+            code: 'email-already-in-use',
+            message: 'Este email já está registrado. Por favor, faça login.',
+          );
+        }
+      }
+      throw _handleFirebaseAuthException(e);
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'verification-failed',
+        message: 'Falha ao iniciar verificação: ${e.toString()}',
+      );
+    }
+  }
+  
+  // Método para verificar status de verificação de email
+  Future<bool> checkEmailVerified() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        await user.reload(); // Recarrega os dados do usuário
+        return user.emailVerified;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  // Método para enviar email de redefinição de senha
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseAuthException(e);
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'reset-password-failed',
+        message: 'Falha ao enviar email de redefinição de senha: ${e.toString()}',
+      );
+    }
+  }
+  
+  // Método para iniciar redefinição de senha por telefone
+  Future<PhoneAuthCredential?> initiatePasswordResetByPhone(String phoneNumber) async {
+    try {
+      // Verificar se o telefone está registrado
+      final userRecord = await _getUserByPhoneNumber(phoneNumber);
+      if (userRecord == null) {
+        throw FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'Não existe conta associada a este número de telefone.',
+        );
+      }
+      
+      // Iniciar a verificação por telefone
+      Completer<PhoneAuthCredential?> completer = Completer<PhoneAuthCredential?>();
+      String? verificationId;
+      
+      await _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) {
+          // Auto-verificação completa (Android)
+          if (!completer.isCompleted) {
+            completer.complete(credential);
+          }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          if (!completer.isCompleted) {
+            completer.completeError(_handleFirebaseAuthException(e));
+          }
+        },
+        codeSent: (String vId, int? resendToken) {
+          verificationId = vId;
+          if (!completer.isCompleted) {
+            // Retorna null quando o código é enviado com sucesso para o usuário
+            // O ID de verificação é necessário para verificar o código posteriormente
+            completer.complete(null);
+          }
+        },
+        codeAutoRetrievalTimeout: (String vId) {
+          // Timeout para recuperação automática de código (Android)
+        },
+        timeout: const Duration(seconds: 60),
+      );
+      
+      final result = await completer.future;
+      
+      // Se chegarmos aqui com sucesso, retornamos o credential ou null (código enviado)
+      return result;
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        throw e;
+      }
+      throw FirebaseAuthException(
+        code: 'phone-verification-failed',
+        message: 'Falha ao iniciar a verificação por telefone: ${e.toString()}',
+      );
+    }
+  }
+  
+  // Método para verificar o código de redefinição de senha
+  Future<void> verifyPasswordResetCode(String code) async {
+    try {
+      await _auth.verifyPasswordResetCode(code);
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseAuthException(e);
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'verify-reset-code-failed',
+        message: 'Falha ao verificar código de redefinição de senha: ${e.toString()}',
+      );
+    }
+  }
+  
+  // Método para confirmar a redefinição de senha
+  Future<void> confirmPasswordReset(String code, String newPassword) async {
+    try {
+      await _auth.confirmPasswordReset(code: code, newPassword: newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseAuthException(e);
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'confirm-reset-failed',
+        message: 'Falha ao confirmar redefinição de senha: ${e.toString()}',
+      );
+    }
+  }
+  
+  // Método privado para encontrar usuário pelo número de telefone
+  Future<User?> _getUserByPhoneNumber(String phoneNumber) async {
+    try {
+      // Verificar se há métodos de login para este número
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .limit(1)
+          .get();
+      
+      if (querySnapshot.docs.isEmpty) {
+        return null;
+      }
+      
+      // Obter o ID do usuário a partir do Firestore
+      final uid = querySnapshot.docs.first.id;
+      
+      // Em um cenário real, você precisaria verificar no Firebase Auth também
+      // aqui estamos simplificando e retornando o usuário atual ou null
+      return _auth.currentUser;
+    } catch (e) {
+      return null;
+    }
   }
 }

@@ -76,8 +76,8 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
               SnackBar(content: Text(state.message)),
             );
           } else if (state is AuthenticatedState) {
-            // Usuário autenticado, navegar para a tela principal
-            Navigator.of(context).pushReplacementNamed('/home');
+            // Usuário autenticado, navegar para a tela de login
+            Navigator.of(context).pushReplacementNamed('/login');
           }
         },
         builder: (context, state) {

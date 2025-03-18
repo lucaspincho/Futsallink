@@ -137,6 +137,52 @@ class UpdatePasswordEvent extends AuthEvent {
 
 class LogoutEvent extends AuthEvent {}
 
+// Eventos para redefinição de senha via email
+class ResetPasswordViaEmailEvent extends AuthEvent {
+  final String email;
+
+  const ResetPasswordViaEmailEvent({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+
+// Eventos para redefinição de senha via telefone
+class ResetPasswordViaPhoneEvent extends AuthEvent {
+  final String phoneNumber;
+
+  const ResetPasswordViaPhoneEvent({required this.phoneNumber});
+
+  @override
+  List<Object?> get props => [phoneNumber];
+}
+
+class VerifyPasswordResetCodeEvent extends AuthEvent {
+  final String verificationId;
+  final String code;
+
+  const VerifyPasswordResetCodeEvent({
+    required this.verificationId,
+    required this.code,
+  });
+
+  @override
+  List<Object?> get props => [verificationId, code];
+}
+
+class ConfirmPasswordResetEvent extends AuthEvent {
+  final String newPassword;
+  final String? verificationCode;
+
+  const ConfirmPasswordResetEvent({
+    required this.newPassword,
+    this.verificationCode,
+  });
+
+  @override
+  List<Object?> get props => [newPassword, verificationCode];
+}
+
 // States - adicionando novos estados para o fluxo de autenticação
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -244,6 +290,40 @@ class RegistrationCompletedState extends AuthState {
   List<Object?> get props => [user];
 }
 
+// Estados para redefinição de senha
+class PasswordResetEmailSentState extends AuthState {
+  final String email;
+  
+  const PasswordResetEmailSentState({required this.email});
+  
+  @override
+  List<Object?> get props => [email];
+}
+
+class PasswordResetPhoneVerificationSentState extends AuthState {
+  final String phoneNumber;
+  final String verificationId;
+  
+  const PasswordResetPhoneVerificationSentState({
+    required this.phoneNumber,
+    required this.verificationId,
+  });
+  
+  @override
+  List<Object?> get props => [phoneNumber, verificationId];
+}
+
+class PasswordResetCodeVerifiedState extends AuthState {
+  final AuthCredential credential;
+  
+  const PasswordResetCodeVerifiedState({required this.credential});
+  
+  @override
+  List<Object?> get props => [credential];
+}
+
+class PasswordResetCompletedState extends AuthState {}
+
 // Bloc - refatorado para usar casos de uso e adicionar novos métodos
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // Casos de uso injetados
@@ -260,6 +340,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UpdatePasswordUseCase _updatePasswordUseCase;
   final GetCurrentUserUseCase _getCurrentUserUseCase;
   final SignOutUseCase _signOutUseCase;
+  
+  // Novos casos de uso para redefinição de senha
+  final ResetPasswordViaEmailUseCase _resetPasswordViaEmailUseCase;
+  final ResetPasswordViaPhoneUseCase _resetPasswordViaPhoneUseCase;
+  final VerifyPasswordResetCodeUseCase _verifyPasswordResetCodeUseCase;
+  final ConfirmPasswordResetUseCase _confirmPasswordResetUseCase;
 
   AuthBloc({
     required SignInWithEmailUseCase signInWithEmailUseCase,
@@ -275,6 +361,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required UpdatePasswordUseCase updatePasswordUseCase,
     required GetCurrentUserUseCase getCurrentUserUseCase,
     required SignOutUseCase signOutUseCase,
+    required ResetPasswordViaEmailUseCase resetPasswordViaEmailUseCase,
+    required ResetPasswordViaPhoneUseCase resetPasswordViaPhoneUseCase,
+    required VerifyPasswordResetCodeUseCase verifyPasswordResetCodeUseCase,
+    required ConfirmPasswordResetUseCase confirmPasswordResetUseCase,
   })  : _signInWithEmailUseCase = signInWithEmailUseCase,
         _signUpWithEmailUseCase = signUpWithEmailUseCase,
         _initiateEmailVerificationUseCase = initiateEmailVerificationUseCase,
@@ -288,6 +378,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _updatePasswordUseCase = updatePasswordUseCase,
         _getCurrentUserUseCase = getCurrentUserUseCase,
         _signOutUseCase = signOutUseCase,
+        _resetPasswordViaEmailUseCase = resetPasswordViaEmailUseCase,
+        _resetPasswordViaPhoneUseCase = resetPasswordViaPhoneUseCase,
+        _verifyPasswordResetCodeUseCase = verifyPasswordResetCodeUseCase,
+        _confirmPasswordResetUseCase = confirmPasswordResetUseCase,
         super(AuthInitial()) {
     
     // Registrando handlers para eventos
@@ -303,6 +397,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResetPasswordEvent>(_onResetPassword);
     on<UpdatePasswordEvent>(_onUpdatePassword);
     on<LogoutEvent>(_onLogout);
+    
+    // Registrando handlers para novos eventos de redefinição de senha
+    on<ResetPasswordViaEmailEvent>(_onResetPasswordViaEmail);
+    on<ResetPasswordViaPhoneEvent>(_onResetPasswordViaPhone);
+    on<VerifyPasswordResetCodeEvent>(_onVerifyPasswordResetCode);
+    on<ConfirmPasswordResetEvent>(_onConfirmPasswordReset);
   }
 
   // Método para escolher método de autenticação
@@ -341,27 +441,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (failure) => emit(AuthErrorState(message: failure.message)),
       (credential) => emit(
         credential.isVerified
-          ? PasswordCreationState(credential: credential)
+          ? EmailVerificationCompletedState(credential: credential)
           : AuthErrorState(message: 'Email ainda não verificado. Verifique sua caixa de entrada.'),
       ),
     );
   }
   
   // Método para iniciar verificação de telefone
-  Future<void> _onInitiatePhoneVerification(
+  void _onInitiatePhoneVerification(
     InitiatePhoneVerificationEvent event,
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
     
+    // Verificar primeiro se o telefone já está registrado
+    final isRegisteredResult = await _checkPhoneRegistrationUseCase(event.phoneNumber);
+    
+    if (isRegisteredResult.isRight()) {
+      final isRegistered = isRegisteredResult.getOrElse(() => false);
+      if (isRegistered) {
+        emit(AuthErrorState(message: 'Este número de telefone já está cadastrado. Tente fazer login.'));
+        return;
+      }
+    }
+    
+    // Iniciar processo de verificação de telefone
     final result = await _initiatePhoneVerificationUseCase(event.phoneNumber);
     
     result.fold(
       (failure) => emit(AuthErrorState(message: failure.message)),
-      (credential) => emit(PhoneVerificationSentState(
-        credential: credential,
-        verificationId: credential.verificationId ?? '',
-      )),
+      (credential) {
+        emit(PhoneVerificationSentState(
+          credential: credential,
+          verificationId: credential.verificationId ?? '',
+        ));
+      },
     );
   }
 
@@ -371,46 +485,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-
+    
     final result = await _verifyPhoneCodeUseCase(event.verificationId, event.code);
-
+    
     result.fold(
       (failure) => emit(AuthErrorState(message: failure.message)),
       (credential) {
-        if (credential.uid != null && credential.verificationStatus == VerificationStatus.completed) {
-          // Usuário já existente, buscar perfil
-          _getCurrentUserUseCase().then(
-            (userResult) => userResult.fold(
-              (failure) => emit(AuthErrorState(message: failure.message)),
-              (user) => user != null 
-                  ? emit(AuthenticatedState(user: user))
-                  : emit(const AuthErrorState(message: 'Usuário não encontrado')),
-            ),
-          );
-        } else {
-          // Usuário novo verificado, precisa definir senha
-          emit(PasswordCreationState(credential: credential));
-        }
+        emit(PhoneVerificationCompletedState(credential: credential));
       },
     );
   }
   
   // Método para completar o cadastro após verificação
-  Future<void> _onCompleteSignUp(
+  void _onCompleteSignUp(
     CompleteSignUpEvent event,
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
     
     final result = await _completeSignUpUseCase(
-      event.credential,
-      event.password,
+      event.credential, 
+      event.password, 
       name: event.name,
     );
     
     result.fold(
       (failure) => emit(AuthErrorState(message: failure.message)),
-      (user) => emit(RegistrationCompletedState(user: user)),
+      (user) => emit(AuthenticatedState(user: user)),
     );
   }
 
@@ -497,6 +598,79 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) => emit(AuthErrorState(message: failure.message)),
       (_) => emit(UnauthenticatedState()),
+    );
+  }
+
+  Future<void> _onResetPasswordViaEmail(
+    ResetPasswordViaEmailEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await _resetPasswordViaEmailUseCase(event.email);
+
+    result.fold(
+      (failure) => emit(AuthErrorState(message: failure.message)),
+      (_) => emit(PasswordResetEmailSentState(email: event.email)),
+    );
+  }
+
+  Future<void> _onResetPasswordViaPhone(
+    ResetPasswordViaPhoneEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await _resetPasswordViaPhoneUseCase(event.phoneNumber);
+
+    result.fold(
+      (failure) => emit(AuthErrorState(message: failure.message)),
+      (credential) {
+        // Se a credencial já foi verificada (caso raro), podemos pular a etapa de verificação
+        if (credential.isVerified) {
+          emit(PasswordResetCodeVerifiedState(credential: credential));
+        } else {
+          // Normalmente, emitimos o estado de verificação enviada
+          emit(PasswordResetPhoneVerificationSentState(
+            phoneNumber: event.phoneNumber,
+            verificationId: credential.verificationId ?? '',
+          ));
+        }
+      },
+    );
+  }
+
+  Future<void> _onVerifyPasswordResetCode(
+    VerifyPasswordResetCodeEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await _verifyPasswordResetCodeUseCase(
+      event.verificationId,
+      event.code,
+    );
+
+    result.fold(
+      (failure) => emit(AuthErrorState(message: failure.message)),
+      (credential) => emit(PasswordResetCodeVerifiedState(credential: credential)),
+    );
+  }
+
+  Future<void> _onConfirmPasswordReset(
+    ConfirmPasswordResetEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await _confirmPasswordResetUseCase(
+      event.newPassword,
+      verificationCode: event.verificationCode,
+    );
+
+    result.fold(
+      (failure) => emit(AuthErrorState(message: failure.message)),
+      (_) => emit(PasswordResetCompletedState()),
     );
   }
 }

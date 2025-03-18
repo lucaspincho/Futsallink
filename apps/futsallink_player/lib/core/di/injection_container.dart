@@ -33,6 +33,17 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => UpdatePasswordUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => SignOutUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => InitiateEmailVerificationUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => VerifyEmailCodeUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => CompleteSignUpUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => CheckEmailRegistrationUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => CheckPhoneRegistrationUseCase(sl<AuthRepository>()));
+  
+  // Novos Use Cases para redefinição de senha
+  sl.registerLazySingleton(() => ResetPasswordViaEmailUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ResetPasswordViaPhoneUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => VerifyPasswordResetCodeUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ConfirmPasswordResetUseCase(sl<AuthRepository>()));
 
   //===== BLoCs =====
   sl.registerFactory<AuthBloc>(
@@ -45,6 +56,15 @@ Future<void> initDependencies() async {
       updatePasswordUseCase: sl<UpdatePasswordUseCase>(),
       getCurrentUserUseCase: sl<GetCurrentUserUseCase>(),
       signOutUseCase: sl<SignOutUseCase>(),
+      initiateEmailVerificationUseCase: sl<InitiateEmailVerificationUseCase>(),
+      verifyEmailCodeUseCase: sl<VerifyEmailCodeUseCase>(),
+      completeSignUpUseCase: sl<CompleteSignUpUseCase>(),
+      checkEmailRegistrationUseCase: sl<CheckEmailRegistrationUseCase>(),
+      checkPhoneRegistrationUseCase: sl<CheckPhoneRegistrationUseCase>(),
+      resetPasswordViaEmailUseCase: sl<ResetPasswordViaEmailUseCase>(),
+      resetPasswordViaPhoneUseCase: sl<ResetPasswordViaPhoneUseCase>(),
+      verifyPasswordResetCodeUseCase: sl<VerifyPasswordResetCodeUseCase>(),
+      confirmPasswordResetUseCase: sl<ConfirmPasswordResetUseCase>(),
     ),
   );
 

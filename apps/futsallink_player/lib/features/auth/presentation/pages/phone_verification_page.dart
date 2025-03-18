@@ -74,7 +74,7 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
             Navigator.pushReplacementNamed(
               context, 
               '/create-password',
-              arguments: state.credential,
+              arguments: {'credential': state.credential},
             );
           }
         },

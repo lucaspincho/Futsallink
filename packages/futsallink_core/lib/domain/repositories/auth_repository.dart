@@ -23,6 +23,12 @@ abstract class AuthRepository {
   Future<Either<Failure, User>> createUserFromCredential(AuthCredential credential, {String? password, String? name});
   Future<Either<Failure, User>> getUserProfile(String uid);
   
+  // Métodos para redefinição de senha
+  Future<Either<Failure, bool>> resetPasswordViaEmail(String email);
+  Future<Either<Failure, AuthCredential>> resetPasswordViaPhone(String phoneNumber);
+  Future<Either<Failure, AuthCredential>> verifyPasswordResetCode(String verificationId, String code);
+  Future<Either<Failure, bool>> confirmPasswordReset(String newPassword, {String? verificationCode});
+  
   // Outros métodos
   Future<Either<Failure, bool>> isEmailRegistered(String email);
   Future<Either<Failure, bool>> isPhoneRegistered(String phoneNumber);

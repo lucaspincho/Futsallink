@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                         CustomLink(
                           text: 'Crie aqui',
                           onPressed: () {
-                            Navigator.of(context).pushNamed('/phone-verification');
+                            Navigator.of(context).pushNamed('/email-verification');
                           },
                         ),
                       ],

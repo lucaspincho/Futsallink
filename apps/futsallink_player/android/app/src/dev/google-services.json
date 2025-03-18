@@ -1,0 +1,46 @@
+{
+    "project_info": {
+      "project_number": "859865604977",
+      "project_id": "futsallink-project",
+      "storage_bucket": "futsallink-project.firebasestorage.app"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:859865604977:android:c38798e48d122061af0cd0",
+          "android_client_info": {
+            "package_name": "com.futsallink.player.dev"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "859865604977-exemplo1234567890.apps.googleusercontent.com",
+            "client_type": 1,
+            "android_info": {
+              "package_name": "com.futsallink.player.dev",
+              "certificate_hash": "0C9A4D7D89644525C1086F5D9666148CA0CCA83B"
+            }
+          },
+          {
+            "client_id": "859865604977-outroexemplo1234567890.apps.googleusercontent.com",
+            "client_type": 1,
+            "android_info": {
+              "package_name": "com.futsallink.player.dev",
+              "certificate_hash": "5B982A1AAE158A97FF1C98F9A1A9AC69D3546CFCFB0C0B471963A1B46659A374"
+            }
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyDkUL3X_O2jjFYZvBeD-YTdwU9j_IcSxVA"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": []
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }

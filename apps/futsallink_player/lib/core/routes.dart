@@ -1,89 +1,86 @@
 // Em apps/futsallink_player/lib/core/routes.dart
 
 import 'package:flutter/material.dart';
-import 'package:futsallink_player/features/auth/presentation/pages/auth_method_page.dart';
+import 'package:futsallink_core/futsallink_core.dart';
 import 'package:futsallink_player/features/auth/presentation/pages/login_page.dart';
-import 'package:futsallink_player/features/auth/presentation/pages/register_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/email_verification_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/phone_input_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/phone_verification_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/create_password_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/email_verification_check_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/forgot_password_email_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/forgot_password_phone_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/reset_password_email_confirmation_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/reset_password_phone_verification_page.dart';
+import 'package:futsallink_player/features/auth/presentation/pages/new_password_form_page.dart';
+import 'package:futsallink_player/features/home/presentation/pages/home_page.dart';
 
 // Rotas da aplicação
 final Map<String, WidgetBuilder> appRoutes = {
   // Autenticação
-  '/': (context) => const AuthMethodPage(),
-  '/auth-method': (context) => const AuthMethodPage(),
+  '/': (context) => const LoginPage(),
   '/login': (context) => const LoginPage(),
-  '/phone-verification': (context) => const RegisterPage(),
+  '/email-verification': (context) => const EmailVerificationPage(),
+  '/phone-input': (context) => const PhoneInputPage(),
+  '/phone-verification': (context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    return PhoneVerificationPage(
+      verificationId: args?['verificationId'] as String,
+      phoneNumber: args?['phoneNumber'] as String,
+    );
+  },
+  '/email-verification-check': (context) {
+    final args = ModalRoute.of(context)?.settings.arguments as String?;
+    return EmailVerificationCheckPage(email: args ?? '');
+  },
+  '/create-password': (context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    return CreatePasswordPage();
+  },
+  
+  // Rotas para redefinição de senha
+  '/forgot-password': (context) => const ForgotPasswordPage(),
+  '/forgot-password-email': (context) => const ForgotPasswordEmailPage(),
+  '/forgot-password-phone': (context) => const ForgotPasswordPhonePage(),
+  '/reset-password-email-confirmation': (context) {
+    final email = ModalRoute.of(context)?.settings.arguments as String?;
+    return ResetPasswordEmailConfirmationPage(email: email ?? '');
+  },
+  '/reset-password-phone-verification': (context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    return ResetPasswordPhoneVerificationPage(
+      verificationId: args?['verificationId'] as String,
+      phoneNumber: args?['phoneNumber'] as String,
+    );
+  },
+  '/new-password-form': (context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    return NewPasswordFormPage(
+      credential: args?['credential'] as AuthCredential,
+    );
+  },
   
   // Outras rotas da aplicação
-  '/home': (context) => const Scaffold(body: Center(child: Text('Home Page'))),
+  '/home': (context) => const HomePage(),
   // Adicione outras rotas aqui
 };
-
-// Páginas temporárias para compilação
-class VerificationCodePage extends StatelessWidget {
-  final String verificationId;
-  final String phoneNumber;
-  
-  const VerificationCodePage({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Página de Verificação de Código - $phoneNumber'),
-      ),
-    );
-  }
-}
-
-class CreatePasswordPage extends StatelessWidget {
-  final String phoneNumber;
-  
-  const CreatePasswordPage({Key? key, required this.phoneNumber}) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Página de Criação de Senha - $phoneNumber'),
-      ),
-    );
-  }
-}
 
 // Gerenciador de rotas para lidar com rotas que precisam de parâmetros
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case '/verification-code':
-        final args = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
-          builder: (_) => VerificationCodePage(
-            verificationId: args['verificationId'],
-            phoneNumber: args['phoneNumber'],
-          ),
-        );
-        
-      case '/create-password':
-        final args = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
-          builder: (_) => CreatePasswordPage(
-            phoneNumber: args['phoneNumber'],
-          ),
-        );
-        
-      default:
-        if (appRoutes.containsKey(settings.name)) {
-          return MaterialPageRoute(
-            builder: appRoutes[settings.name]!,
-          );
-        }
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(
-              child: Text('Rota não encontrada: ${settings.name}'),
-            ),
-          ),
-        );
+    if (appRoutes.containsKey(settings.name)) {
+      return MaterialPageRoute(
+        builder: appRoutes[settings.name]!,
+        settings: settings,
+      );
     }
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        body: Center(
+          child: Text('Rota não encontrada: ${settings.name}'),
+        ),
+      ),
+    );
   }
 }

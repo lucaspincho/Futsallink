@@ -1,23 +1,13 @@
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
-    id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
     id "kotlin-android"
-    // O plugin do Flutter Gradle precisa ser aplicado após os outros plugins
     id "dev.flutter.flutter-gradle-plugin"
 }
 
 dependencies {
-    // Importa o BoM do Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-
-    // Adiciona a dependência do Firebase Authentication
     implementation("com.google.firebase:firebase-auth")
-
     implementation 'com.google.firebase:firebase-auth-ktx'
-    
-    // Adicionando desugaring para compatibilidade com Java 8
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }
 
@@ -29,7 +19,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-        // Habilitando desugaring
         coreLibraryDesugaringEnabled true
     }
 
@@ -39,13 +28,13 @@ android {
 
     defaultConfig {
         applicationId = "com.futsallink.player"
-        minSdk = 23  // Correção aplicada
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
-    flavorDimensions "flavor-type" // Define uma dimensão para os flavors
+    flavorDimensions "flavor-type"
 
     productFlavors {
         dev {
@@ -56,7 +45,7 @@ android {
 
         prod {
             dimension "flavor-type"
-            applicationIdSuffix ".prod"
+            // Sem applicationIdSuffix para prod
             versionNameSuffix "-prod"
         }
     }
@@ -66,22 +55,16 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
-}
 
-android.applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-        def flavor = variant.flavorName
-        def googleServicesFile = file("src/${flavor}/google-services.json")
-        if (googleServicesFile.exists()) {
-            copy {
-                from googleServicesFile
-                into "."
-            }
-        }
+    // Configura os soursets específicos para cada flavor
+    sourceSets {
+        dev.setRoot('src/dev')
+        prod.setRoot('src/prod')
     }
 }
 
-// O plugin do Google Services deve ser aplicado **APÓS** a configuração do Gradle
+// Aplica o plugin do GoogleServices após as configurações de flavor
+// Este plugin irá procurar pelo google-services.json no diretório específico do flavor
 apply plugin: 'com.google.gms.google-services'
 
 flutter {

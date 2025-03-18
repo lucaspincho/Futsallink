@@ -47,7 +47,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
         listener: (context, state) {
           if (state is EmailVerificationSentState) {
             setState(() {
-              _isInProgress = true;
+              _isInProgress = false;
             });
             
             ScaffoldMessenger.of(context).showSnackBar(
@@ -63,6 +63,9 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               arguments: _emailController.text,
             );
           } else if (state is AuthErrorState) {
+            setState(() {
+              _isInProgress = false;
+            });
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -126,11 +129,18 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                             },
                     ),
                     const SizedBox(height: FutsallinkSpacing.md),
-                    SecondaryButton(
-                      text: 'VOLTAR',
+                    TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
+                      child: const Text('VOLTAR'),
+                    ),
+                    const SizedBox(height: FutsallinkSpacing.md),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacementNamed('/phone-input');
+                      },
+                      child: const Text('Usar verificação por telefone'),
                     ),
                   ],
                 ),
