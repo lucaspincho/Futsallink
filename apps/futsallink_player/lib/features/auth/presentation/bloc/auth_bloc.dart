@@ -3,6 +3,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:futsallink_core/futsallink_core.dart';
+import 'package:futsallink_core/domain/usecases/player/get_profile_completion_status.dart';
 
 // Extensão para manipular as mensagens de erro
 extension FailureMessage on Failure {
@@ -183,6 +184,16 @@ class ConfirmPasswordResetEvent extends AuthEvent {
   List<Object?> get props => [newPassword, verificationCode];
 }
 
+// Evento para quando o usuário está logado
+class UserLoggedInEvent extends AuthEvent {
+  final User user;
+
+  const UserLoggedInEvent(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}
+
 // States - adicionando novos estados para o fluxo de autenticação
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -197,11 +208,17 @@ class AuthLoading extends AuthState {}
 
 class AuthenticatedState extends AuthState {
   final User user;
+  final bool needsProfileCreation;
+  final int lastCompletedStep;
 
-  const AuthenticatedState({required this.user});
+  const AuthenticatedState({
+    required this.user,
+    this.needsProfileCreation = false,
+    this.lastCompletedStep = -1,
+  });
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, needsProfileCreation, lastCompletedStep];
 }
 
 class UnauthenticatedState extends AuthState {}
@@ -347,6 +364,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final VerifyPasswordResetCodeUseCase _verifyPasswordResetCodeUseCase;
   final ConfirmPasswordResetUseCase _confirmPasswordResetUseCase;
 
+  final GetProfileCompletionStatus _getProfileCompletionStatus;
+
   AuthBloc({
     required SignInWithEmailUseCase signInWithEmailUseCase,
     required SignUpWithEmailUseCase signUpWithEmailUseCase,
@@ -365,6 +384,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required ResetPasswordViaPhoneUseCase resetPasswordViaPhoneUseCase,
     required VerifyPasswordResetCodeUseCase verifyPasswordResetCodeUseCase,
     required ConfirmPasswordResetUseCase confirmPasswordResetUseCase,
+    required GetProfileCompletionStatus getProfileCompletionStatus,
   })  : _signInWithEmailUseCase = signInWithEmailUseCase,
         _signUpWithEmailUseCase = signUpWithEmailUseCase,
         _initiateEmailVerificationUseCase = initiateEmailVerificationUseCase,
@@ -382,6 +402,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _resetPasswordViaPhoneUseCase = resetPasswordViaPhoneUseCase,
         _verifyPasswordResetCodeUseCase = verifyPasswordResetCodeUseCase,
         _confirmPasswordResetUseCase = confirmPasswordResetUseCase,
+        _getProfileCompletionStatus = getProfileCompletionStatus,
         super(AuthInitial()) {
     
     // Registrando handlers para eventos
@@ -403,6 +424,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResetPasswordViaPhoneEvent>(_onResetPasswordViaPhone);
     on<VerifyPasswordResetCodeEvent>(_onVerifyPasswordResetCode);
     on<ConfirmPasswordResetEvent>(_onConfirmPasswordReset);
+
+    // Atualizar o handler de SignIn para verificar o status do perfil
+    on<UserLoggedInEvent>(_onUserLoggedIn);
   }
 
   // Método para escolher método de autenticação
@@ -484,14 +508,49 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     VerifyPhoneCodeEvent event,
     Emitter<AuthState> emit,
   ) async {
+    print('[AuthBloc] Iniciando verificação de código de telefone');
+    if (emit.isDone) {
+      print('[AuthBloc] Emit já finalizado, abortando verificação de código');
+      return;
+    }
     emit(AuthLoading());
     
     final result = await _verifyPhoneCodeUseCase(event.verificationId, event.code);
     
+    if (emit.isDone) {
+      print('[AuthBloc] Emit finalizado após verificação de código');
+      return;
+    }
+
     result.fold(
-      (failure) => emit(AuthErrorState(message: failure.message)),
-      (credential) {
-        emit(PhoneVerificationCompletedState(credential: credential));
+      (failure) {
+        print('[AuthBloc] Falha na verificação do código: ${failure.message}');
+        emit(AuthErrorState(message: failure.message));
+      },
+      (credential) async {
+        print('[AuthBloc] Código verificado, completando signup');
+        final signInResult = await _completeSignUpUseCase(credential, '', name: null);
+        
+        if (emit.isDone) {
+          print('[AuthBloc] Emit finalizado após completar signup');
+          return;
+        }
+
+        signInResult.fold(
+          (failure) {
+            print('[AuthBloc] Falha ao completar signup: ${failure.message}');
+            emit(AuthErrorState(message: failure.message));
+          },
+          (user) {
+            print('[AuthBloc] Signup completado com sucesso para usuário: ${user?.uid}');
+            if (user != null) {
+              _verifyProfileStatus(user, emit);
+            } else {
+              print('[AuthBloc] Usuário nulo após signup bem sucedido');
+              emit(AuthErrorState(message: 'Falha ao autenticar com o código'));
+            }
+          },
+        );
       },
     );
   }
@@ -519,14 +578,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LoginWithEmailPasswordEvent event,
     Emitter<AuthState> emit,
   ) async {
+    print('[AuthBloc] Iniciando login com email e senha');
+    if (emit.isDone) {
+      print('[AuthBloc] Emit já finalizado, abortando login');
+      return;
+    }
     emit(AuthLoading());
-
-    // Usando o caso de uso que já contém a validação internamente
+    
     final result = await _signInWithEmailUseCase(event.email, event.password);
+    
+    if (emit.isDone) {
+      print('[AuthBloc] Emit finalizado após autenticação');
+      return;
+    }
 
     result.fold(
-      (failure) => emit(AuthErrorState(message: failure.message)),
-      (user) => emit(AuthenticatedState(user: user)),
+      (failure) {
+        print('[AuthBloc] Falha no login: ${failure.message}');
+        emit(AuthErrorState(message: failure.message));
+      },
+      (user) {
+        print('[AuthBloc] Login bem sucedido, verificando perfil do usuário: ${user?.uid}');
+        if (user != null) {
+          _verifyProfileStatus(user, emit);
+        } else {
+          print('[AuthBloc] Usuário nulo após login bem sucedido');
+          emit(AuthErrorState(message: 'Falha ao fazer login'));
+        }
+      },
     );
   }
 
@@ -672,5 +751,89 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (failure) => emit(AuthErrorState(message: failure.message)),
       (_) => emit(PasswordResetCompletedState()),
     );
+  }
+
+  Future<void> _onUserLoggedIn(
+    UserLoggedInEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    print('[AuthBloc] Evento UserLoggedIn recebido para usuário: ${event.user.uid}');
+    if (emit.isDone) {
+      print('[AuthBloc] Emit já finalizado, abortando verificação de perfil');
+      return;
+    }
+    emit(AuthLoading());
+    
+    await _verifyProfileStatus(event.user, emit);
+    print('[AuthBloc] Verificação de perfil concluída para usuário: ${event.user.uid}');
+  }
+
+  // Método auxiliar para verificar o status do perfil
+  Future<void> _verifyProfileStatus(User user, Emitter<AuthState> emit) async {
+    print('[AuthBloc] Iniciando verificação de status do perfil para usuário: ${user.uid}');
+    if (emit.isDone) {
+      print('[AuthBloc] Emit já finalizado, abortando verificação de status');
+      return;
+    }
+
+    try {
+      // Adiciona um timeout de 10 segundos
+      final statusResult = await _getProfileCompletionStatus(
+        GetProfileCompletionStatusParams(uid: user.uid),
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          print('[AuthBloc] Timeout ao verificar status do perfil');
+          throw TimeoutException('Timeout ao verificar status do perfil');
+        },
+      );
+      
+      print('[AuthBloc] Resposta recebida do getProfileCompletionStatus');
+      
+      if (emit.isDone) {
+        print('[AuthBloc] Emit finalizado após receber status do perfil');
+        return;
+      }
+
+      statusResult.fold(
+        (failure) {
+          print('[AuthBloc] Falha ao verificar status do perfil: ${failure.message}');
+          // Em caso de falha, assume que o perfil não existe e redireciona para criação
+          emit(AuthenticatedState(
+            user: user,
+            needsProfileCreation: true,
+            lastCompletedStep: -1,
+          ));
+        }, 
+        (status) {
+          print('[AuthBloc] Status do perfil recebido: $status');
+          if (emit.isDone) {
+            print('[AuthBloc] Emit finalizado antes de emitir estado baseado no status');
+            return;
+          }
+
+          // Emite o estado apropriado baseado no status
+          emit(AuthenticatedState(
+            user: user,
+            needsProfileCreation: status != ProfileCompletionStatus.complete,
+            lastCompletedStep: status == ProfileCompletionStatus.partial ? -1 : 0,
+          ));
+          print('[AuthBloc] Estado emitido com sucesso');
+        },
+      );
+    } catch (e, stackTrace) {
+      print('[AuthBloc] Erro ao verificar status do perfil: $e');
+      print('[AuthBloc] Stack trace: $stackTrace');
+      if (emit.isDone) {
+        print('[AuthBloc] Emit finalizado após erro');
+        return;
+      }
+      // Em caso de erro, assume que o perfil não existe
+      emit(AuthenticatedState(
+        user: user,
+        needsProfileCreation: true,
+        lastCompletedStep: -1,
+      ));
+    }
   }
 }

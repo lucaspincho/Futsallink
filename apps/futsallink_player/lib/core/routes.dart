@@ -15,6 +15,7 @@ import 'package:futsallink_player/features/auth/presentation/pages/reset_passwor
 import 'package:futsallink_player/features/auth/presentation/pages/reset_password_phone_verification_page.dart';
 import 'package:futsallink_player/features/auth/presentation/pages/new_password_form_page.dart';
 import 'package:futsallink_player/features/home/presentation/pages/home_page.dart';
+import 'package:futsallink_player/features/profile/presentation/pages/profile_creation_page.dart';
 
 // Rotas da aplicação
 final Map<String, WidgetBuilder> appRoutes = {
@@ -60,6 +61,9 @@ final Map<String, WidgetBuilder> appRoutes = {
       credential: args?['credential'] as AuthCredential,
     );
   },
+  
+  // Criação de Perfil
+  '/profile-creation': (context) => const ProfileCreationPage(),
   
   // Outras rotas da aplicação
   '/home': (context) => const HomePage(),

@@ -1,14 +1,9 @@
 import 'package:dartz/dartz.dart';
-import '../../core/failures.dart';
-import '../../entities/player.dart';
-import '../../repositories/player_repository.dart';
-import '../usecase.dart';
-
-class GetPlayerParams {
-  final String id;
-
-  GetPlayerParams({required this.id});
-}
+import 'package:equatable/equatable.dart';
+import 'package:futsallink_core/domain/core/failures.dart';
+import 'package:futsallink_core/domain/entities/player.dart';
+import 'package:futsallink_core/domain/repositories/player_repository.dart';
+import 'package:futsallink_core/domain/usecases/usecase.dart';
 
 class GetPlayer implements UseCase<Player, GetPlayerParams> {
   final PlayerRepository repository;
@@ -16,7 +11,16 @@ class GetPlayer implements UseCase<Player, GetPlayerParams> {
   GetPlayer(this.repository);
 
   @override
-  Future<Either<Failure, Player>> call(GetPlayerParams params) {
-    return repository.getPlayer(params.id);
+  Future<Either<Failure, Player>> call(GetPlayerParams params) async {
+    return await repository.getPlayer(params.uid);
   }
+}
+
+class GetPlayerParams extends Equatable {
+  final String uid;
+
+  const GetPlayerParams({required this.uid});
+
+  @override
+  List<Object?> get props => [uid];
 }

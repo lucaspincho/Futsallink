@@ -3,36 +3,50 @@ import 'package:equatable/equatable.dart';
 
 class Player extends Equatable {
   final String uid;
-  final String name;
+  final String firstName;
+  final String lastName;
+  final String? nickname;
   final String position;
   final DateTime birthday;
   final int height;
   final double weight;
   final String dominantFoot;
-  final String bio;
-  final LocationInfo location;
-  final String profileImage;
-  final List<String> videos;
-  final SocialMedia socialMedia;
+  final String? bio;
+  final String? currentTeam;
+  final LocationInfo? location;
+  final String? profileImage;
+  final List<String>? videos;
+  final SocialMedia? socialMedia;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final bool profileCompleted;
+  final int lastCompletedStep;
+  final ProfileCompletionStatus completionStatus;
 
   const Player({
     required this.uid,
-    required this.name,
+    required this.firstName,
+    required this.lastName,
+    this.nickname,
     required this.position,
     required this.birthday,
     required this.height,
     required this.weight,
     required this.dominantFoot,
-    required this.bio,
-    required this.location,
-    required this.profileImage,
-    required this.videos,
-    required this.socialMedia,
+    this.bio,
+    this.currentTeam,
+    this.location,
+    this.profileImage,
+    this.videos,
+    this.socialMedia,
     required this.createdAt,
     required this.updatedAt,
+    this.profileCompleted = false,
+    this.lastCompletedStep = 0,
+    this.completionStatus = ProfileCompletionStatus.none,
   });
+
+  String get fullName => '$firstName $lastName';
 
   int get age {
     final today = DateTime.now();
@@ -45,7 +59,28 @@ class Player extends Equatable {
   }
 
   @override
-  List<Object?> get props => [uid, name, position];
+  List<Object?> get props => [
+        uid,
+        firstName,
+        lastName,
+        nickname,
+        position,
+        birthday,
+        height,
+        weight,
+        dominantFoot,
+        bio,
+        currentTeam,
+        location,
+        profileImage,
+        videos,
+        socialMedia,
+        createdAt,
+        updatedAt,
+        profileCompleted,
+        lastCompletedStep,
+        completionStatus,
+      ];
 }
 
 class LocationInfo extends Equatable {
@@ -76,4 +111,10 @@ class SocialMedia extends Equatable {
 
   @override
   List<Object?> get props => [instagram, youtube, tiktok];
+}
+
+enum ProfileCompletionStatus {
+  none,
+  partial,
+  complete,
 }
