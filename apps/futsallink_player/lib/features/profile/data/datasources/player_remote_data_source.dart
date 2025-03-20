@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:futsallink_core/futsallink_core.dart';
 import 'package:futsallink_firebase/futsallink_firebase.dart';
 import 'package:futsallink_player/features/profile/data/models/player_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class PlayerRemoteDataSource {
   Future<PlayerModel> createPlayer(PlayerModel player);
@@ -70,18 +71,50 @@ class PlayerRemoteDataSourceImpl implements PlayerRemoteDataSource {
   @override
   Future<String> uploadProfileImage(String uid, File imageFile) async {
     try {
+      print('[PlayerRemoteDataSource] Iniciando upload de imagem para usuário: $uid');
+      print('[PlayerRemoteDataSource] Verificando autenticação do usuário...');
+      
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        print('[PlayerRemoteDataSource] Usuário não está autenticado');
+        throw Exception('Usuário não está autenticado');
+      }
+      
+      print('[PlayerRemoteDataSource] Usuário autenticado: ${currentUser.uid}');
+      print('[PlayerRemoteDataSource] Tentando fazer upload para: players/$uid/profile_image');
+      
       final ref = firebaseStorage.ref().child('players/$uid/profile_image');
       final uploadTask = await ref.putFile(imageFile);
       final downloadUrl = await uploadTask.ref.getDownloadURL();
 
-      // Atualiza o documento do jogador com a URL da imagem
-      await firestoreService.updateDocument(
-        'players/$uid',
-        {'profileImage': downloadUrl},
-      );
+      print('[PlayerRemoteDataSource] Upload concluído com sucesso');
+      print('[PlayerRemoteDataSource] URL da imagem: $downloadUrl');
+
+      // Verificar se o documento existe
+      final docRef = firestoreService.document('players/$uid');
+      final docSnapshot = await docRef.get();
+
+      if (!docSnapshot.exists) {
+        print('[PlayerRemoteDataSource] Documento não existe, criando novo');
+        // Criar documento com dados básicos
+        await docRef.set({
+          'uid': uid,
+          'profileImage': downloadUrl,
+          'createdAt': DateTime.now().toIso8601String(),
+          'updatedAt': DateTime.now().toIso8601String(),
+        });
+      } else {
+        print('[PlayerRemoteDataSource] Documento existe, atualizando');
+        // Atualizar apenas a URL da imagem
+        await docRef.update({
+          'profileImage': downloadUrl,
+          'updatedAt': DateTime.now().toIso8601String(),
+        });
+      }
 
       return downloadUrl;
     } catch (e) {
+      print('[PlayerRemoteDataSource] Erro durante o upload: $e');
       throw Exception('Falha ao fazer upload da imagem: $e');
     }
   }

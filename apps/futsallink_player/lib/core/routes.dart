@@ -63,7 +63,36 @@ final Map<String, WidgetBuilder> appRoutes = {
   },
   
   // Criação de Perfil
-  '/profile-creation': (context) => const ProfileCreationPage(),
+  '/profile/create': (context) {
+    // Adicionar logs para verificar se a rota está sendo chamada
+    print('[AppRouter] Rota /profile/create chamada');
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    print('[AppRouter] Argumentos: $args');
+    return ProfileCreationPage(
+      user: args?['user'] as User?,
+      lastCompletedStep: args?['lastCompletedStep'] as int? ?? 0,
+    );
+  },
+  '/profile/complete': (context) {
+    // Adicionar logs para verificar se a rota está sendo chamada
+    print('[AppRouter] Rota /profile/complete chamada');
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    print('[AppRouter] Argumentos: $args');
+    return ProfileCreationPage(
+      user: args?['user'] as User?,
+      lastCompletedStep: args?['lastCompletedStep'] as int? ?? 0,
+    );
+  },
+  '/profile-creation': (context) {
+    // Manter compatibilidade com rota antiga, mas adicionar logs
+    print('[AppRouter] Rota /profile-creation chamada (compatibilidade)');
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    print('[AppRouter] Argumentos: $args');
+    return ProfileCreationPage(
+      user: args?['user'] as User?,
+      lastCompletedStep: args?['lastCompletedStep'] as int? ?? 0,
+    );
+  },
   
   // Outras rotas da aplicação
   '/home': (context) => const HomePage(),

@@ -7,7 +7,14 @@ import 'package:futsallink_ui/futsallink_ui.dart';
 import 'package:get_it/get_it.dart';
 
 class ProfileCreationPage extends StatefulWidget {
-  const ProfileCreationPage({Key? key}) : super(key: key);
+  final User? user;
+  final int? lastCompletedStep;
+
+  const ProfileCreationPage({
+    Key? key, 
+    this.user,
+    this.lastCompletedStep,
+  }) : super(key: key);
 
   @override
   State<ProfileCreationPage> createState() => _ProfileCreationPageState();
@@ -15,32 +22,63 @@ class ProfileCreationPage extends StatefulWidget {
 
 class _ProfileCreationPageState extends State<ProfileCreationPage> {
   final PageController _pageController = PageController(initialPage: 0);
+  late final ProfileCreationCubit _profileCreationCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    print("[ProfileCreationPage] initState chamado");
+    _profileCreationCubit = GetIt.instance<ProfileCreationCubit>();
+    
+    // Atrasar a inicialização para garantir que o widget esteja montado
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        print("[ProfileCreationPage] Post frame callback - iniciando cubit");
+        _profileCreationCubit.initProfileCreation(widget.user);
+      }
+    });
+  }
 
   @override
   void dispose() {
+    print("[ProfileCreationPage] dispose chamado");
     _pageController.dispose();
+    // Não fechamos o cubit aqui, pois ele é gerenciado pelo GetIt
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProfileCreationCubit>(
-      create: (_) => GetIt.instance<ProfileCreationCubit>()..initProfileCreation(),
+    print("[ProfileCreationPage] build chamado");
+    
+    return BlocProvider<ProfileCreationCubit>.value(
+      value: _profileCreationCubit,
       child: BlocConsumer<ProfileCreationCubit, ProfileCreationState>(
         listener: (context, state) {
+          print("[ProfileCreationPage] BlocConsumer listener: estado ${state.runtimeType}");
+          
           if (state is ProfileCreationSuccess) {
+            print("[ProfileCreationPage] Perfil criado com sucesso, redirecionando para home");
             Navigator.of(context).pushReplacementNamed('/home');
           }
           
           if (state is ProfileCreationActive) {
-            _pageController.animateToPage(
-              state.currentStep,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
+            // Garantir que o PageView esteja disponível antes de animar
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _pageController.hasClients) {
+                print("[ProfileCreationPage] Animando para o passo ${state.currentStep}");
+                _pageController.animateToPage(
+                  state.currentStep,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              }
+            });
           }
         },
         builder: (context, state) {
+          print("[ProfileCreationPage] BlocConsumer builder: estado ${state.runtimeType}");
+          
           if (state is ProfileCreationLoading) {
             return const Scaffold(
               body: Center(
@@ -64,7 +102,7 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<ProfileCreationCubit>().initProfileCreation();
+                        _profileCreationCubit.initProfileCreation(widget.user);
                       },
                       child: const Text('Tentar novamente'),
                     ),
@@ -82,7 +120,7 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                     ? IconButton(
                         icon: const Icon(Icons.arrow_back),
                         onPressed: () {
-                          context.read<ProfileCreationCubit>().goToPreviousStep();
+                          _profileCreationCubit.goToPreviousStep();
                         },
                       )
                     : null,
@@ -131,9 +169,9 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                         onPressed: state.isCurrentStepValid
                             ? () {
                                 if (state.currentStep == state.totalSteps - 1) {
-                                  context.read<ProfileCreationCubit>().completeProfile();
+                                  _profileCreationCubit.completeProfile();
                                 } else {
-                                  context.read<ProfileCreationCubit>().goToNextStep();
+                                  _profileCreationCubit.goToNextStep();
                                 }
                               }
                             : null,

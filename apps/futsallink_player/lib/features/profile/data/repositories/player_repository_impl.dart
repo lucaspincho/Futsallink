@@ -61,7 +61,13 @@ class PlayerRepositoryImpl implements PlayerRepository {
       print('[PlayerRepository] Status do perfil recebido: ${player.completionStatus}');
       return Right(player.completionStatus);
     } catch (e) {
-      print('[PlayerRepository] Erro ao verificar status do perfil: $e');
+      print('[PlayerRepository] Erro ao buscar perfil: $e');
+      // Se o erro for "Perfil de jogador não encontrado", não trate como falha
+      // Em vez disso, retorne NOT_FOUND como um status válido
+      if (e.toString().contains('Perfil de jogador não encontrado')) {
+        print('[PlayerRepository] Perfil não encontrado, retornando ProfileCompletionStatus.none');
+        return const Right(ProfileCompletionStatus.none);
+      }
       return Left(ServerFailure(message: e.toString()));
     }
   }

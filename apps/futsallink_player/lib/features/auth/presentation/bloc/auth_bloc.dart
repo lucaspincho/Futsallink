@@ -1,5 +1,6 @@
 // Em apps/futsallink_player/lib/features/auth/presentation/bloc/auth_bloc.dart
 
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:futsallink_core/futsallink_core.dart';
@@ -194,6 +195,16 @@ class UserLoggedInEvent extends AuthEvent {
   List<Object?> get props => [user];
 }
 
+// Eventos para verificação de perfil
+class CheckProfileStatusEvent extends AuthEvent {
+  final User user;
+  
+  const CheckProfileStatusEvent({required this.user});
+  
+  @override
+  List<Object?> get props => [user];
+}
+
 // States - adicionando novos estados para o fluxo de autenticação
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -341,6 +352,38 @@ class PasswordResetCodeVerifiedState extends AuthState {
 
 class PasswordResetCompletedState extends AuthState {}
 
+// States - adicionando novos estados mais específicos para o fluxo de autenticação
+class ProfileNotFoundState extends AuthState {
+  final User user;
+  
+  const ProfileNotFoundState({required this.user});
+  
+  @override
+  List<Object?> get props => [user];
+}
+
+class ProfileCreationRequiredState extends AuthState {
+  final User user;
+  final int lastCompletedStep;
+  
+  const ProfileCreationRequiredState({
+    required this.user,
+    this.lastCompletedStep = -1,
+  });
+  
+  @override
+  List<Object?> get props => [user, lastCompletedStep];
+}
+
+class ProfileCompleteState extends AuthState {
+  final User user;
+  
+  const ProfileCompleteState({required this.user});
+  
+  @override
+  List<Object?> get props => [user];
+}
+
 // Bloc - refatorado para usar casos de uso e adicionar novos métodos
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // Casos de uso injetados
@@ -413,6 +456,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyPhoneCodeEvent>(_onVerifyPhoneCode);
     on<CompleteSignUpEvent>(_onCompleteSignUp);
     on<LoginWithEmailPasswordEvent>(_onLoginWithEmailPassword);
+    on<CheckProfileStatusEvent>(_onCheckProfileStatus);
     on<LoginWithPhoneEvent>(_onLoginWithPhone);
     on<RegisterEvent>(_onRegister);
     on<ResetPasswordEvent>(_onResetPassword);
@@ -427,6 +471,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Atualizar o handler de SignIn para verificar o status do perfil
     on<UserLoggedInEvent>(_onUserLoggedIn);
+    
+    // Adicionar observer para logar todas as mudanças de estado
+    print('[AuthBloc] Inicializando com estado: ${state.runtimeType}');
+  }
+
+  @override
+  void onTransition(Transition<AuthEvent, AuthState> transition) {
+    super.onTransition(transition);
+    print('[AuthBloc] Transição: ${transition.event.runtimeType} => ${transition.currentState.runtimeType} -> ${transition.nextState.runtimeType}');
+  }
+
+  @override
+  void onChange(Change<AuthState> change) {
+    super.onChange(change);
+    print('[AuthBloc] Alteração de estado: ${change.currentState.runtimeType} -> ${change.nextState.runtimeType}');
+  }
+
+  @override
+  void onEvent(AuthEvent event) {
+    super.onEvent(event);
+    print('[AuthBloc] Evento recebido: ${event.runtimeType}');
   }
 
   // Método para escolher método de autenticação
@@ -544,7 +609,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           (user) {
             print('[AuthBloc] Signup completado com sucesso para usuário: ${user?.uid}');
             if (user != null) {
-              _verifyProfileStatus(user, emit);
+              // Emitir autenticação bem-sucedida e disparar verificação de perfil
+              emit(AuthenticatedState(user: user));
+              add(CheckProfileStatusEvent(user: user));
             } else {
               print('[AuthBloc] Usuário nulo após signup bem sucedido');
               emit(AuthErrorState(message: 'Falha ao autenticar com o código'));
@@ -560,6 +627,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CompleteSignUpEvent event,
     Emitter<AuthState> emit,
   ) async {
+    print('[AuthBloc] Iniciando processo de completar cadastro');
     emit(AuthLoading());
     
     final result = await _completeSignUpUseCase(
@@ -569,8 +637,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     
     result.fold(
-      (failure) => emit(AuthErrorState(message: failure.message)),
-      (user) => emit(AuthenticatedState(user: user)),
+      (failure) {
+        print('[AuthBloc] Falha ao completar cadastro: ${failure.message}');
+        emit(AuthErrorState(message: failure.message));
+      },
+      (user) {
+        print('[AuthBloc] Cadastro completado com sucesso para usuário: ${user?.uid}');
+        if (user != null) {
+          // Emitir autenticação bem-sucedida e disparar verificação de perfil
+          emit(AuthenticatedState(user: user));
+          add(CheckProfileStatusEvent(user: user));
+        } else {
+          emit(AuthErrorState(message: 'Erro ao completar cadastro'));
+        }
+      },
     );
   }
 
@@ -598,9 +678,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthErrorState(message: failure.message));
       },
       (user) {
-        print('[AuthBloc] Login bem sucedido, verificando perfil do usuário: ${user?.uid}');
+        print('[AuthBloc] Login bem sucedido para usuário: ${user?.uid}');
         if (user != null) {
-          _verifyProfileStatus(user, emit);
+          // Emitir um estado de autenticação bem-sucedida
+          emit(AuthenticatedState(user: user));
+          
+          // Disparar evento para verificar o perfil em um novo ciclo de eventos
+          print('[AuthBloc] Disparando evento CheckProfileStatusEvent');
+          add(CheckProfileStatusEvent(user: user));
         } else {
           print('[AuthBloc] Usuário nulo após login bem sucedido');
           emit(AuthErrorState(message: 'Falha ao fazer login'));
@@ -628,13 +713,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     RegisterEvent event,
     Emitter<AuthState> emit,
   ) async {
+    print('[AuthBloc] Iniciando registro com email e senha');
     emit(AuthLoading());
 
     final result = await _signUpWithEmailUseCase(event.email, event.password, '');
 
     result.fold(
-      (failure) => emit(AuthErrorState(message: failure.message)),
-      (user) => emit(AuthenticatedState(user: user)),
+      (failure) {
+        print('[AuthBloc] Falha no registro: ${failure.message}');
+        emit(AuthErrorState(message: failure.message));
+      },
+      (user) {
+        print('[AuthBloc] Registro bem sucedido, verificando perfil do usuário: ${user?.uid}');
+        if (user != null) {
+          // Emitir autenticação bem-sucedida e disparar verificação de perfil
+          emit(AuthenticatedState(user: user));
+          add(CheckProfileStatusEvent(user: user));
+        } else {
+          emit(AuthErrorState(message: 'Falha ao registrar usuário'));
+        }
+      },
     );
   }
 
@@ -758,28 +856,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     print('[AuthBloc] Evento UserLoggedIn recebido para usuário: ${event.user.uid}');
-    if (emit.isDone) {
-      print('[AuthBloc] Emit já finalizado, abortando verificação de perfil');
-      return;
-    }
     emit(AuthLoading());
     
-    await _verifyProfileStatus(event.user, emit);
-    print('[AuthBloc] Verificação de perfil concluída para usuário: ${event.user.uid}');
+    // Em vez de verificar diretamente, disparar um evento de verificação de perfil
+    add(CheckProfileStatusEvent(user: event.user));
   }
 
-  // Método auxiliar para verificar o status do perfil
-  Future<void> _verifyProfileStatus(User user, Emitter<AuthState> emit) async {
-    print('[AuthBloc] Iniciando verificação de status do perfil para usuário: ${user.uid}');
-    if (emit.isDone) {
-      print('[AuthBloc] Emit já finalizado, abortando verificação de status');
-      return;
-    }
-
+  // Novo método para lidar com a verificação de perfil como um evento separado
+  Future<void> _onCheckProfileStatus(
+    CheckProfileStatusEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    print("[AuthBloc] Iniciando verificação de perfil para: ${event.user.uid}");
     try {
-      // Adiciona um timeout de 10 segundos
       final statusResult = await _getProfileCompletionStatus(
-        GetProfileCompletionStatusParams(uid: user.uid),
+        GetProfileCompletionStatusParams(uid: event.user.uid),
       ).timeout(
         const Duration(seconds: 10),
         onTimeout: () {
@@ -788,52 +879,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         },
       );
       
-      print('[AuthBloc] Resposta recebida do getProfileCompletionStatus');
+      print("[AuthBloc] Resultado obtido para verificação de perfil");
       
-      if (emit.isDone) {
-        print('[AuthBloc] Emit finalizado após receber status do perfil');
-        return;
-      }
-
       statusResult.fold(
         (failure) {
-          print('[AuthBloc] Falha ao verificar status do perfil: ${failure.message}');
-          // Em caso de falha, assume que o perfil não existe e redireciona para criação
-          emit(AuthenticatedState(
-            user: user,
-            needsProfileCreation: true,
-            lastCompletedStep: -1,
-          ));
-        }, 
+          print("[AuthBloc] Falha ao verificar status do perfil: ${failure.message}");
+          emit(ProfileNotFoundState(user: event.user));
+        },
         (status) {
-          print('[AuthBloc] Status do perfil recebido: $status');
-          if (emit.isDone) {
-            print('[AuthBloc] Emit finalizado antes de emitir estado baseado no status');
-            return;
+          print("[AuthBloc] Status do perfil: $status");
+          
+          if (status == ProfileCompletionStatus.none) {
+            print("[AuthBloc] Emitindo ProfileNotFoundState");
+            emit(ProfileNotFoundState(user: event.user));
+          } else if (status == ProfileCompletionStatus.partial) {
+            print("[AuthBloc] Emitindo ProfileCreationRequiredState");
+            emit(ProfileCreationRequiredState(user: event.user, lastCompletedStep: -1));
+          } else {
+            print("[AuthBloc] Emitindo ProfileCompleteState");
+            emit(ProfileCompleteState(user: event.user));
           }
-
-          // Emite o estado apropriado baseado no status
-          emit(AuthenticatedState(
-            user: user,
-            needsProfileCreation: status != ProfileCompletionStatus.complete,
-            lastCompletedStep: status == ProfileCompletionStatus.partial ? -1 : 0,
-          ));
-          print('[AuthBloc] Estado emitido com sucesso');
         },
       );
-    } catch (e, stackTrace) {
-      print('[AuthBloc] Erro ao verificar status do perfil: $e');
-      print('[AuthBloc] Stack trace: $stackTrace');
-      if (emit.isDone) {
-        print('[AuthBloc] Emit finalizado após erro');
-        return;
-      }
-      // Em caso de erro, assume que o perfil não existe
-      emit(AuthenticatedState(
-        user: user,
-        needsProfileCreation: true,
-        lastCompletedStep: -1,
-      ));
+    } catch (e) {
+      print("[AuthBloc] Erro ao verificar status do perfil: $e");
+      emit(ProfileNotFoundState(user: event.user));
     }
   }
 }
