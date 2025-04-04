@@ -9,6 +9,7 @@ export 'themes/dark_theme.dart';
 // Exportar componentes
 export 'components/buttons/primary_button.dart';
 export 'components/inputs/custom_text_field.dart';
+export 'components/inputs/custom_dropdown_selector.dart';
 export 'components/cards/club_card.dart';
 export 'components/selectors/position_selector.dart';
 export 'components/text/custom_link.dart';

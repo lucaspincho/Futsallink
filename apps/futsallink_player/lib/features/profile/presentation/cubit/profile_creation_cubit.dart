@@ -325,7 +325,7 @@ class ProfileCreationCubit extends Cubit<ProfileCreationState> {
           emit(currentState.copyWith(
             player: updatedPlayer,
             isUploading: false,
-            isCurrentStepValid: true,
+            isCurrentStepValid: true, // Sempre válido, pois é opcional
           ));
         },
       );

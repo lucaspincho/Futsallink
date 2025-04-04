@@ -12,18 +12,19 @@ class ScreenTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container( // ✅ Novo Container para forçar largura total
+    return Container(
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.only(bottom: bottomPadding),
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+          style: const TextStyle(
+            fontFamily: 'Unbounded',
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
-          textAlign: TextAlign.center, // Mantém o alinhamento central
+          textAlign: TextAlign.center,
         ),
       ),
     );

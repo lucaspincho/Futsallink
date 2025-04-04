@@ -4,6 +4,7 @@ import 'package:futsallink_core/futsallink_core.dart';
 import 'package:futsallink_player/features/profile/presentation/cubit/profile_creation_cubit.dart';
 import 'package:futsallink_player/features/profile/presentation/widgets/profile_steps.dart';
 import 'package:futsallink_ui/futsallink_ui.dart';
+import 'package:futsallink_ui/components/header/futsallink_logo_header.dart';
 import 'package:get_it/get_it.dart';
 
 class ProfileCreationPage extends StatefulWidget {
@@ -114,27 +115,41 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
 
           if (state is ProfileCreationActive) {
             return Scaffold(
-              appBar: AppBar(
-                title: const Text('Criar Perfil'),
-                leading: state.currentStep > 0
-                    ? IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () {
-                          _profileCreationCubit.goToPreviousStep();
-                        },
-                      )
-                    : null,
+              backgroundColor: FutsallinkColors.darkBackground,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(80),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 26.0),
+                  child: AppBar(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    automaticallyImplyLeading: false,
+                    leading: state.currentStep > 0
+                        ? IconButton(
+                            icon: const Icon(Icons.arrow_back, color: Colors.white),
+                            onPressed: () {
+                              _profileCreationCubit.goToPreviousStep();
+                            },
+                          )
+                        : null,
+                    title: const Center(
+                      child: FutsallinkLogoHeader(
+                        logoHeight: 28.0,
+                        verticalPadding: 16.0,
+                      ),
+                    ),
+                    centerTitle: true,
+                    actions: [
+                      // Widget transparente para balancear o botão voltar
+                      state.currentStep > 0
+                          ? const SizedBox(width: 48)
+                          : const SizedBox.shrink(),
+                    ],
+                  ),
+                ),
               ),
               body: Column(
                 children: [
-                  // Indicador de progresso
-                  LinearProgressIndicator(
-                    value: state.currentStep / (state.totalSteps - 1),
-                    backgroundColor: Colors.grey[300],
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      FutsallinkColors.primary,
-                    ),
-                  ),
                   Expanded(
                     child: PageView(
                       controller: _pageController,
@@ -155,39 +170,21 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
                   ),
                   // Botão de navegação
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: FutsallinkColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        onPressed: state.isCurrentStepValid
-                            ? () {
-                                if (state.currentStep == state.totalSteps - 1) {
-                                  _profileCreationCubit.completeProfile();
-                                } else {
-                                  _profileCreationCubit.goToNextStep();
-                                }
+                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 32.0),
+                    child: PrimaryButton(
+                      text: state.currentStep == state.totalSteps - 1
+                          ? 'CONCLUIR'
+                          : 'AVANÇAR',
+                      onPressed: state.isCurrentStepValid
+                          ? () {
+                              if (state.currentStep == state.totalSteps - 1) {
+                                _profileCreationCubit.completeProfile();
+                              } else {
+                                _profileCreationCubit.goToNextStep();
                               }
-                            : null,
-                        child: state.isSubmitting
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : Text(
-                                state.currentStep == state.totalSteps - 1
-                                    ? 'Concluir'
-                                    : 'Continuar',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                      ),
+                            }
+                          : null,
+                      isLoading: state.isSubmitting,
                     ),
                   ),
                 ],

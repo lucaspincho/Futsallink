@@ -87,18 +87,22 @@ class _ProfilePhotoStepState extends State<ProfilePhotoStep> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Adicione uma foto de perfil',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                const Text(
+                  'Foto de Perfil',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Escolha uma foto que mostre bem o seu rosto',
-                  style: TextStyle(fontSize: 16),
+                  'Adicione uma foto para seu perfil (opcional)',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 Center(
                   child: Stack(
                     alignment: Alignment.bottomRight,
@@ -130,37 +134,35 @@ class _ProfilePhotoStepState extends State<ProfilePhotoStep> {
                     ),
                   ),
                 if (errorMessage != null)
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.red[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
                     child: Text(
-                      'Erro: $errorMessage',
-                      style: const TextStyle(color: Colors.red),
+                      errorMessage,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                const SizedBox(height: 32),
-                const Text(
-                  'Dicas para uma boa foto de perfil:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildTipItem('Escolha um local bem iluminado'),
-                _buildTipItem('Use um fundo neutro e sem distrações'),
-                _buildTipItem('Mostre seu rosto claramente, sem óculos escuros'),
-                _buildTipItem('Uma foto recente e de boa qualidade'),
-                const SizedBox(height: 16),
-                const Text(
-                  'A foto de perfil é opcional, mas recomendada para aumentar suas chances de ser notado por clubes e olheiros.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
+                const SizedBox(height: 24),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      // Marca a etapa como válida e avança
+                      if (state is ProfileCreationActive) {
+                        context.read<ProfileCreationCubit>().emit(
+                          state.copyWith(isCurrentStepValid: true),
+                        );
+                        context.read<ProfileCreationCubit>().goToNextStep();
+                      }
+                    },
+                    child: const Text(
+                      'Pular esta etapa',
+                      style: TextStyle(
+                        color: FutsallinkColors.primary,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ),
               ],

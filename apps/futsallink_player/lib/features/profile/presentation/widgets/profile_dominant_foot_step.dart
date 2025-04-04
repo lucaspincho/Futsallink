@@ -22,11 +22,6 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
       'icon': Icons.arrow_back,
       'description': 'Preferência pelo pé esquerdo para chutes e passes'
     },
-    {
-      'value': 'Ambos',
-      'icon': Icons.compare_arrows,
-      'description': 'Habilidade similar com ambos os pés'
-    },
   ];
 
   String? _selectedFoot;
@@ -41,9 +36,14 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
     final state = context.read<ProfileCreationCubit>().state;
     if (state is ProfileCreationActive) {
       if (state.player.dominantFoot.isNotEmpty) {
-        setState(() {
-          _selectedFoot = state.player.dominantFoot;
-        });
+        // Se o jogador tinha "Ambos" selecionado anteriormente, resetamos para null
+        if (state.player.dominantFoot == "Ambos") {
+          context.read<ProfileCreationCubit>().updateDominantFoot("");
+        } else {
+          setState(() {
+            _selectedFoot = state.player.dominantFoot;
+          });
+        }
       }
     }
   }
@@ -56,16 +56,12 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Qual é o seu pé dominante?',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            const ScreenTitle(
+              text: 'QUAL É O SEU PÉ DOMINANTE?',
+              bottomPadding: 8.0,
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Selecione o pé com o qual você tem mais habilidade',
-              style: TextStyle(fontSize: 16),
+            const SubtitleText(
+              text: 'Selecione o pé com o qual você tem mais habilidade',
             ),
             const SizedBox(height: 32),
             ...dominantFootOptions.map((option) => _buildFootTile(option)),
@@ -91,11 +87,13 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           decoration: BoxDecoration(
-            color: isSelected ? FutsallinkColors.primary.withOpacity(0.1) : Colors.grey[200],
+            color: isSelected 
+              ? Colors.white.withOpacity(0.15) 
+              : FutsallinkColors.darkBackground.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? FutsallinkColors.primary : Colors.transparent,
-              width: 2,
+              color: isSelected ? FutsallinkColors.primary : Colors.white.withOpacity(0.2),
+              width: isSelected ? 2 : 1,
             ),
           ),
           child: Row(
@@ -112,9 +110,10 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
                   children: [
                     Text(
                       option['value'] as String,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.white : Colors.white.withOpacity(0.9),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -122,7 +121,7 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
                       option['description'] as String,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[400],
                       ),
                     ),
                   ],

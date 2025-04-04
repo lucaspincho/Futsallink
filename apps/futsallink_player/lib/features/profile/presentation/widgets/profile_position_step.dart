@@ -47,18 +47,14 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Qual a sua posição?',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            const ScreenTitle(
+              text: 'QUAL SUA POSIÇÃO?',
+              bottomPadding: 8.0,
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Selecione a posição em que você joga',
-              style: TextStyle(fontSize: 16),
+            const SubtitleText(
+              text: 'Escolha sua posição de atuação no futsal.',
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             ...positions.map((position) => _buildPositionTile(position)),
             const SizedBox(height: 24),
             const Text(
@@ -91,11 +87,13 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           decoration: BoxDecoration(
-            color: isSelected ? FutsallinkColors.primary.withOpacity(0.1) : Colors.grey[200],
+            color: isSelected 
+              ? Colors.white.withOpacity(0.15) 
+              : FutsallinkColors.darkBackground.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? FutsallinkColors.primary : Colors.transparent,
-              width: 2,
+              color: isSelected ? FutsallinkColors.primary : Colors.white.withOpacity(0.2),
+              width: isSelected ? 2 : 1,
             ),
           ),
           child: Row(
@@ -108,9 +106,10 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
                   children: [
                     Text(
                       position,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.white : Colors.white.withOpacity(0.9),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -118,7 +117,7 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
                       _getPositionDescription(position),
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[400],
                       ),
                     ),
                   ],

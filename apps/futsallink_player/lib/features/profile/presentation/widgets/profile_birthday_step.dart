@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:futsallink_player/features/profile/presentation/cubit/profile_creation_cubit.dart';
 import 'package:futsallink_ui/futsallink_ui.dart';
-import 'package:intl/intl.dart';
 
 class ProfileBirthdayStep extends StatefulWidget {
   const ProfileBirthdayStep({Key? key}) : super(key: key);
@@ -12,8 +11,9 @@ class ProfileBirthdayStep extends StatefulWidget {
 }
 
 class _ProfileBirthdayStepState extends State<ProfileBirthdayStep> {
-  final _birthdayController = TextEditingController();
-  final _dateFormat = DateFormat('dd/MM/yyyy');
+  int? _selectedDay;
+  int? _selectedMonth;
+  int? _selectedYear;
   DateTime? _selectedDate;
 
   @override
@@ -24,126 +24,93 @@ class _ProfileBirthdayStepState extends State<ProfileBirthdayStep> {
 
   void _initializeFields() {
     final state = context.read<ProfileCreationCubit>().state;
-    if (state is ProfileCreationActive) {
+    if (state is ProfileCreationActive && state.player.birthday != null) {
       _selectedDate = state.player.birthday;
-      _birthdayController.text = _dateFormat.format(_selectedDate!);
-      
-      // Atualiza o estado caso a data já seja válida
-      if (_selectedDate != null) {
-        context.read<ProfileCreationCubit>().updateBirthday(_selectedDate!);
+      _selectedDay = _selectedDate?.day;
+      _selectedMonth = _selectedDate?.month;
+      _selectedYear = _selectedDate?.year;
+    }
+  }
+
+  void _updateDate() {
+    if (_selectedDay != null && _selectedMonth != null && _selectedYear != null) {
+      try {
+        final newDate = DateTime(_selectedYear!, _selectedMonth!, _selectedDay!);
+        setState(() {
+          _selectedDate = newDate;
+        });
+        context.read<ProfileCreationCubit>().updateBirthday(newDate);
+      } catch (e) {
+        // Data inválida, não atualiza
       }
     }
   }
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now().subtract(const Duration(days: 365 * 18)),
-      firstDate: DateTime(1940),
-      lastDate: DateTime.now(),
-      helpText: 'Selecione sua data de nascimento',
-      cancelText: 'Cancelar',
-      confirmText: 'Confirmar',
-      fieldLabelText: 'Data de nascimento',
-      fieldHintText: 'DD/MM/AAAA',
-      errorFormatText: 'Insira uma data válida',
-      errorInvalidText: 'Insira uma data dentro do intervalo válido',
-    );
-
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        _birthdayController.text = _dateFormat.format(picked);
-        context.read<ProfileCreationCubit>().updateBirthday(picked);
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _birthdayController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Qual é a sua data de nascimento?',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+            const SizedBox(height: 60),
+            const ScreenTitle(
+              text: 'QUAL SUA IDADE?',
+              bottomPadding: 8.0,
+            ),
+            const SubtitleText(
+              text: 'Informe sua data de nascimento abaixo.\nSua idade nos ajudará a indicar seletivas perfeitas para você.',
+            ),
+            const Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Campo Dia
+                CustomDropdownSelector<int>(
+                  label: 'Dia',
+                  value: _selectedDay,
+                  items: List.generate(31, (index) => index + 1),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedDay = value;
+                    });
+                    _updateDate();
+                  },
+                ),
+                const SizedBox(width: 16),
+                // Campo Mês
+                CustomDropdownSelector<int>(
+                  label: 'Mês',
+                  value: _selectedMonth,
+                  items: List.generate(12, (index) => index + 1),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedMonth = value;
+                    });
+                    _updateDate();
+                  },
+                ),
+                const SizedBox(width: 16),
+                // Campo Ano
+                CustomDropdownSelector<int>(
+                  label: 'Ano',
+                  value: _selectedYear,
+                  items: List.generate(
+                    DateTime.now().year - 1940 + 1,
+                    (index) => DateTime.now().year - index,
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedYear = value;
+                    });
+                    _updateDate();
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Sua idade é um dado importante para clubes e olheiros',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 32),
-            BlocBuilder<ProfileCreationCubit, ProfileCreationState>(
-              builder: (context, state) {
-                if (state is ProfileCreationActive) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: _birthdayController,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: 'Data de Nascimento *',
-                          hintText: 'DD/MM/AAAA',
-                          prefixIcon: const Icon(Icons.calendar_today),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.edit_calendar),
-                            onPressed: _selectDate,
-                          ),
-                        ),
-                        onTap: _selectDate,
-                      ),
-                      const SizedBox(height: 24),
-                      if (_selectedDate != null)
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.info_outline, color: Colors.blue),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'Sua idade: ${state.player.age} anos',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        '* Campo obrigatório',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
+            const Spacer(flex: 2),
           ],
         ),
       ),

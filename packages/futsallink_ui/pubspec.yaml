@@ -52,3 +52,6 @@ flutter:
           weight: 800
         - asset: ../../assets/fonts/Unbounded-Black.ttf
           weight: 900
+  assets:
+    - ../../assets/images/logo.svg
+    - assets/images/logo.svg

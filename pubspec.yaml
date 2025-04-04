@@ -11,3 +11,4 @@ dev_dependencies:
 flutter:
   assets:
     - assets/logo.svg
+    - assets/images/logo.svg

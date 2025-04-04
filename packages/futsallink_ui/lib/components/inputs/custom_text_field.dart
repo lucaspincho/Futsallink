@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:futsallink_ui/tokens/colors.dart';
+import 'package:futsallink_ui/tokens/typography.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
@@ -6,41 +8,56 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final Widget? suffixIcon;
-  final void Function(String)? onChanged; //
-  final String? Function(String?)?
-      validator; // ✅ Adicionado suporte a validação
+  final void Function(String)? onChanged;
+  final String? Function(String?)? validator;
+  final TextCapitalization textCapitalization;
 
   const CustomTextField({
     Key? key,
     required this.hintText,
     required this.controller,
     this.obscureText = false,
-    this.keyboardType = TextInputType.text,this.suffixIcon,
+    this.keyboardType = TextInputType.text,
+    this.suffixIcon,
     this.onChanged,
-    this.validator, // ✅ Novo parâmetro opcional
+    this.validator,
+    this.textCapitalization = TextCapitalization.none,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white, width: 1.5),
-        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white, width: 1.0),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
-        style: TextStyle(color: Colors.white),
+        textCapitalization: textCapitalization,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
         onChanged: onChanged,
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
           border: InputBorder.none,
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.grey[400]),
-          suffixIcon: suffixIcon, // ✅ Adiciona o ícone de visibilidade da senha
+          hintStyle: TextStyle(
+            color: Colors.white.withOpacity(0.85),
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+          suffixIcon: suffixIcon,
+          errorStyle: TextStyle(
+            color: FutsallinkColors.error,
+            fontSize: 13,
+          ),
         ),
-        validator: validator, // ✅ Agora pode validar
+        validator: validator,
       ),
     );
   }

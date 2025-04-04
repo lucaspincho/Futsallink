@@ -11,7 +11,7 @@ class SubtitleText extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Text(
         text,
-        style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+        style: TextStyle(fontSize: 18, color: Colors.grey[400]),
         textAlign: TextAlign.center, // Para manter alinhado como nos seus designs
       ),
     );

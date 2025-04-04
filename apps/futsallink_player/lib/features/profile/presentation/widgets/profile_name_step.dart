@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futsallink_player/features/profile/presentation/cubit/profile_creation_cubit.dart';
 import 'package:futsallink_ui/futsallink_ui.dart';
+import 'package:futsallink_ui/tokens/spacing.dart';
+import 'package:futsallink_ui/components/buttons/primary_button.dart';
 
 class ProfileNameStep extends StatefulWidget {
   const ProfileNameStep({Key? key}) : super(key: key);
@@ -53,81 +56,73 @@ class _ProfileNameStepState extends State<ProfileNameStep> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          onChanged: _updatePlayerInfo,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Como você se chama?',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+    return Form(
+      key: _formKey,
+      onChanged: _updatePlayerInfo,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const ScreenTitle(
+                      text: 'QUEM É VOCÊ?',
+                      bottomPadding: 8.0,
                     ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Digite seu nome completo para que todos possam te identificar',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 32),
-              TextFormField(
-                controller: _firstNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome *',
-                  hintText: 'Ex: João',
-                  prefixIcon: Icon(Icons.person),
-                ),
-                textCapitalization: TextCapitalization.words,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Nome é obrigatório';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _lastNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Sobrenome *',
-                  hintText: 'Ex: Silva',
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
-                textCapitalization: TextCapitalization.words,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Sobrenome é obrigatório';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _nicknameController,
-                decoration: const InputDecoration(
-                  labelText: 'Apelido (opcional)',
-                  hintText: 'Ex: Jota',
-                  prefixIcon: Icon(Icons.badge),
-                ),
-                textCapitalization: TextCapitalization.words,
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                '* Campos obrigatórios',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                  fontStyle: FontStyle.italic,
+
+                    const SizedBox(height: 48),
+
+                    // Campos de entrada
+                    CustomTextField(
+                      controller: _firstNameController,
+                      hintText: 'Nome*',
+                      textCapitalization: TextCapitalization.words,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Nome é obrigatório';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    CustomTextField(
+                      controller: _lastNameController,
+                      hintText: 'Sobrenome*',
+                      textCapitalization: TextCapitalization.words,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Sobrenome é obrigatório';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    CustomTextField(
+                      controller: _nicknameController,
+                      hintText: 'Apelido (Opcional)',
+                      textCapitalization: TextCapitalization.words,
+                    ),
+
+                    // Espaçamento extra antes do botão (que é adicionado pelo widget pai)
+                    const SizedBox(height: 32),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
-} 
+}
