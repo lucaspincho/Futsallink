@@ -71,31 +71,32 @@ class _ProfileHeightWeightStepState extends State<ProfileHeightWeightStep> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Qual é a sua altura e peso?',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+              const ScreenTitle(
+                text: 'QUAL SUA ALTURA E PESO?',
+                bottomPadding: 8.0,
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Informe seus dados físicos para completar seu perfil',
-                style: TextStyle(fontSize: 16),
+              const SubtitleText(
+                text: 'Informe seus dados físicos para completar seu perfil.',
               ),
               const SizedBox(height: 32),
-              TextFormField(
+              
+              // Campo de altura
+              CustomTextField(
+                hintText: 'Altura (cm)*',
                 controller: _heightController,
-                decoration: const InputDecoration(
-                  labelText: 'Altura (cm) *',
-                  hintText: 'Ex: 175',
-                  prefixIcon: Icon(Icons.height),
-                  suffixText: 'cm',
-                ),
                 keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(3),
-                ],
+                suffixIcon: Container(
+                  padding: const EdgeInsets.only(right: 24.0),
+                  alignment: Alignment.center,
+                  width: 40,
+                  child: const Text(
+                    'cm',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Altura é obrigatória';
@@ -112,21 +113,28 @@ class _ProfileHeightWeightStepState extends State<ProfileHeightWeightStep> {
                   
                   return null;
                 },
+                onChanged: (value) => _updatePlayerInfo(),
               ),
+              
               const SizedBox(height: 24),
-              TextFormField(
+              
+              // Campo de peso
+              CustomTextField(
+                hintText: 'Peso (kg)*',
                 controller: _weightController,
-                decoration: const InputDecoration(
-                  labelText: 'Peso (kg) *',
-                  hintText: 'Ex: 70.5',
-                  prefixIcon: Icon(Icons.line_weight),
-                  suffixText: 'kg',
-                ),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
-                  LengthLimitingTextInputFormatter(5),
-                ],
+                suffixIcon: Container(
+                  padding: const EdgeInsets.only(right: 24.0),
+                  alignment: Alignment.center,
+                  width: 40,
+                  child: const Text(
+                    'kg',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Peso é obrigatório';
@@ -143,31 +151,45 @@ class _ProfileHeightWeightStepState extends State<ProfileHeightWeightStep> {
                   
                   return null;
                 },
+                onChanged: (value) => _updatePlayerInfo(),
               ),
+              
               const SizedBox(height: 24),
-              const Text(
+              
+              // Nota sobre campos obrigatórios
+              Text(
                 '* Campos obrigatórios',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey,
+                  color: Colors.grey[400],
                   fontStyle: FontStyle.italic,
                 ),
               ),
+              
               const SizedBox(height: 16),
+              
+              // Box de informações
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: FutsallinkColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: FutsallinkColors.primary.withOpacity(0.3),
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline, color: Colors.blue),
+                    const Icon(Icons.info_outline, color: FutsallinkColors.primary),
                     const SizedBox(width: 12),
                     const Expanded(
                       child: Text(
                         'Estas informações são importantes para os clubes avaliarem seu perfil físico.',
-                        style: TextStyle(fontSize: 14),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],

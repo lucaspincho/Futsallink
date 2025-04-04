@@ -17,7 +17,6 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
     'Ala Esquerda',
     'Ala Direita',
     'Pivô',
-    'Universal',
   ];
 
   String? _selectedPosition;
@@ -32,9 +31,13 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
     final state = context.read<ProfileCreationCubit>().state;
     if (state is ProfileCreationActive) {
       if (state.player.position.isNotEmpty) {
-        setState(() {
-          _selectedPosition = state.player.position;
-        });
+        if (state.player.position == "Universal") {
+          context.read<ProfileCreationCubit>().updatePosition("");
+        } else {
+          setState(() {
+            _selectedPosition = state.player.position;
+          });
+        }
       }
     }
   }
@@ -57,14 +60,6 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
             const SizedBox(height: 24),
             ...positions.map((position) => _buildPositionTile(position)),
             const SizedBox(height: 24),
-            const Text(
-              'Escolha a posição principal em que você atua. Você poderá adicionar outras posições posteriormente.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
           ],
         ),
       ),
@@ -147,8 +142,6 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
         return const Icon(Icons.arrow_forward, color: FutsallinkColors.primary);
       case 'Pivô':
         return const Icon(Icons.sports_soccer, color: FutsallinkColors.primary);
-      case 'Universal':
-        return const Icon(Icons.all_inclusive, color: FutsallinkColors.primary);
       default:
         return const Icon(Icons.sports_soccer, color: FutsallinkColors.primary);
     }
@@ -166,8 +159,6 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
         return 'Atua pelo lado direito da quadra';
       case 'Pivô':
         return 'Joga mais avançado, próximo ao gol adversário';
-      case 'Universal':
-        return 'Adaptável a diferentes posições da quadra';
       default:
         return '';
     }

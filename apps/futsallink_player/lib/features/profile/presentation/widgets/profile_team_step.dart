@@ -55,16 +55,12 @@ class _ProfileTeamStepState extends State<ProfileTeamStep> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Qual é o seu time atual?',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+              const ScreenTitle(
+                text: 'QUAL SEU TIME?',
+                bottomPadding: 8.0,
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Informe o time em que você joga atualmente',
-                style: TextStyle(fontSize: 16),
+              const SubtitleText(
+                text: 'Infome-nos o seu time atual. Caso não esteja em nenhum clube, não marque a opção e aperte em avançar.',
               ),
               const SizedBox(height: 32),
               TextFormField(

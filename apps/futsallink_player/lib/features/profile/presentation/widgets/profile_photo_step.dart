@@ -87,22 +87,14 @@ class _ProfilePhotoStepState extends State<ProfilePhotoStep> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Foto de Perfil',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Adicione uma foto para seu perfil (opcional)',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 24),
+              const ScreenTitle(
+                text: 'ESCOLHA SUA FOTO DE PERFIL',
+                bottomPadding: 8.0,
+              ),
+              const SubtitleText(
+                text: 'Sua foto de perfil pode ser vista por outras pessoas. Escolha aquela foto com uma pegada de craque.',
+              ),
+                const SizedBox(height: 70),
                 Center(
                   child: Stack(
                     alignment: Alignment.bottomRight,

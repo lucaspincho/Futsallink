@@ -57,7 +57,7 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const ScreenTitle(
-              text: 'QUAL É O SEU PÉ DOMINANTE?',
+              text: 'QUAL SEU PÉ DOMINANTE?',
               bottomPadding: 8.0,
             ),
             const SubtitleText(

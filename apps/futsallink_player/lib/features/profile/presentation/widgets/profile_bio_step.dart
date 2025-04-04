@@ -65,17 +65,13 @@ class _ProfileBioStepState extends State<ProfileBioStep> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Conte-nos sobre você',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Escreva uma biografia curta descrevendo sua experiência e objetivos',
-              style: TextStyle(fontSize: 16),
-            ),
+              const ScreenTitle(
+                text: 'BIOGRAFIA',
+                bottomPadding: 8.0,
+              ),
+              const SubtitleText(
+                text: 'Sua biografia pode ser vista por outras pessoas. Escreva o que quiser sobre você.',
+              ),
             const SizedBox(height: 32),
             Container(
               decoration: BoxDecoration(
