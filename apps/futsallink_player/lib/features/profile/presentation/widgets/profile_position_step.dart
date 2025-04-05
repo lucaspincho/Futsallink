@@ -44,25 +44,39 @@ class _ProfilePositionStepState extends State<ProfilePositionStep> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const ScreenTitle(
-              text: 'QUAL SUA POSIÇÃO?',
-              bottomPadding: 8.0,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-            const SubtitleText(
-              text: 'Escolha sua posição de atuação no futsal.',
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const ScreenTitle(
+                    text: 'QUAL SUA POSIÇÃO?',
+                    bottomPadding: 8.0,
+                  ),
+                  
+                  const SubtitleText(
+                    text: 'Selecione a sua posição preferida dentro de quadra.',
+                  ),
+                  
+                  const SizedBox(height: 40),
+                  
+                  ...positions.map((position) => _buildPositionTile(position)),                  
+                  
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
-            ...positions.map((position) => _buildPositionTile(position)),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

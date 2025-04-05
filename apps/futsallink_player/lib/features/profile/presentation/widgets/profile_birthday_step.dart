@@ -48,72 +48,130 @@ class _ProfileBirthdayStepState extends State<ProfileBirthdayStep> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 60),
-            const ScreenTitle(
-              text: 'QUAL SUA IDADE?',
-              bottomPadding: 8.0,
+    // Usando a mesma estrutura do ProfileNameStep
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-            const SubtitleText(
-              text: 'Informe sua data de nascimento abaixo.\nSua idade nos ajudará a indicar seletivas perfeitas para você.',
-            ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Campo Dia
-                CustomDropdownSelector<int>(
-                  label: 'Dia',
-                  value: _selectedDay,
-                  items: List.generate(31, (index) => index + 1),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedDay = value;
-                    });
-                    _updateDate();
-                  },
-                ),
-                const SizedBox(width: 16),
-                // Campo Mês
-                CustomDropdownSelector<int>(
-                  label: 'Mês',
-                  value: _selectedMonth,
-                  items: List.generate(12, (index) => index + 1),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedMonth = value;
-                    });
-                    _updateDate();
-                  },
-                ),
-                const SizedBox(width: 16),
-                // Campo Ano
-                CustomDropdownSelector<int>(
-                  label: 'Ano',
-                  value: _selectedYear,
-                  items: List.generate(
-                    DateTime.now().year - 1940 + 1,
-                    (index) => DateTime.now().year - index,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const ScreenTitle(
+                    text: 'QUAL SUA IDADE?',
+                    bottomPadding: 8.0,
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedYear = value;
-                    });
-                    _updateDate();
-                  },
-                ),
-              ],
+                  
+                  const SubtitleText(
+                    text: 'Vamos usar sua data de nascimento pra encontrar as peneiras ideais pra você.',
+                  ),
+                  
+                  const SizedBox(height: 48),
+                  
+                  // Seletores de data
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Campo Dia
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Dia',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            CustomDropdownSelector<int>(
+                              label: 'Dia',
+                              value: _selectedDay,
+                              items: List.generate(31, (index) => index + 1),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedDay = value;
+                                });
+                                _updateDate();
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 16),
+                        
+                        // Campo Mês
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Mês',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            CustomDropdownSelector<int>(
+                              label: 'Mês',
+                              value: _selectedMonth,
+                              items: List.generate(12, (index) => index + 1),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedMonth = value;
+                                });
+                                _updateDate();
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 16),
+                        
+                        // Campo Ano
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Ano',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            CustomDropdownSelector<int>(
+                              label: 'Ano',
+                              value: _selectedYear,
+                              items: List.generate(
+                                DateTime.now().year - 1940 + 1,
+                                (index) => DateTime.now().year - index,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedYear = value;
+                                });
+                                _updateDate();
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  // Espaçamento extra no final (como no ProfileNameStep)
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
-            const Spacer(flex: 2),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
-} 
+}

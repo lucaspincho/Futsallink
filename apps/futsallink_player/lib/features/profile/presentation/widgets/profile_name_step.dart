@@ -76,6 +76,10 @@ class _ProfileNameStepState extends State<ProfileNameStep> {
                       text: 'QUEM É VOCÊ?',
                       bottomPadding: 8.0,
                     ),
+                    const SubtitleText(
+                      text:
+                          'Vamos começar com o básico pra te conhecer melhor!',
+                    ),
 
                     const SizedBox(height: 48),
 
