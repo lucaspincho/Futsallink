@@ -69,99 +69,120 @@ class _ProfilePhotoStepState extends State<ProfilePhotoStep> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: BlocBuilder<ProfileCreationCubit, ProfileCreationState>(
-          builder: (context, state) {
-            String? imageUrl;
-            bool isUploading = false;
-            String? errorMessage;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: BlocBuilder<ProfileCreationCubit, ProfileCreationState>(
+                builder: (context, state) {
+                  String? imageUrl;
+                  bool isUploading = false;
+                  String? errorMessage;
 
-            if (state is ProfileCreationActive) {
-              imageUrl = state.player.profileImage;
-              isUploading = state.isUploading;
-              errorMessage = state.errorMessage;
-            }
+                  if (state is ProfileCreationActive) {
+                    imageUrl = state.player.profileImage;
+                    isUploading = state.isUploading;
+                    errorMessage = state.errorMessage;
+                  }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-              const ScreenTitle(
-                text: 'ESCOLHA SUA FOTO DE PERFIL',
-                bottomPadding: 8.0,
-              ),
-              const SubtitleText(
-                text: 'Sua foto de perfil pode ser vista por outras pessoas. Escolha aquela foto com uma pegada de craque.',
-              ),
-                const SizedBox(height: 70),
-                Center(
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildProfileImage(imageUrl, isUploading),
-                      if (!isUploading)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: FutsallinkColors.primary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.add_a_photo, color: Colors.white),
-                            onPressed: _showImageSourceDialog,
+                      const ScreenTitle(
+                        text: 'ESCOLHA SUA FOTO DE PERFIL',
+                        bottomPadding: 8.0,
+                      ),
+                      
+                      const SubtitleText(
+                        text: 'Sua foto de perfil pode ser vista por outras pessoas. Escolha aquela foto com uma pegada de craque.',
+                      ),
+                      
+                      const SizedBox(height: 48),
+                      
+                      Center(
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            _buildProfileImage(imageUrl, isUploading),
+                            if (!isUploading)
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: FutsallinkColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.add_a_photo, color: Colors.white),
+                                  onPressed: _showImageSourceDialog,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      if (isUploading)
+                        const Center(
+                          child: Column(
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(height: 8),
+                              Text('Fazendo upload da sua foto...'),
+                            ],
                           ),
                         ),
+                        
+                      if (errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Text(
+                            errorMessage,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        
+                      const SizedBox(height: 24),
+                      
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            // Marca a etapa como válida e avança
+                            if (state is ProfileCreationActive) {
+                              context.read<ProfileCreationCubit>().emit(
+                                state.copyWith(isCurrentStepValid: true),
+                              );
+                              context.read<ProfileCreationCubit>().goToNextStep();
+                            }
+                          },
+                          child: const Text(
+                            'Pular esta etapa',
+                            style: TextStyle(
+                              color: FutsallinkColors.primary,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      // Espaçamento extra no final (como nas outras telas)
+                      const SizedBox(height: 32),
                     ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                if (isUploading)
-                  const Center(
-                    child: Column(
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 8),
-                        Text('Fazendo upload da sua foto...'),
-                      ],
-                    ),
-                  ),
-                if (errorMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      errorMessage,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 24),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      // Marca a etapa como válida e avança
-                      if (state is ProfileCreationActive) {
-                        context.read<ProfileCreationCubit>().emit(
-                          state.copyWith(isCurrentStepValid: true),
-                        );
-                        context.read<ProfileCreationCubit>().goToNextStep();
-                      }
-                    },
-                    child: const Text(
-                      'Pular esta etapa',
-                      style: TextStyle(
-                        color: FutsallinkColors.primary,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

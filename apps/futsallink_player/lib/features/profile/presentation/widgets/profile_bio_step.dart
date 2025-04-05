@@ -70,7 +70,7 @@ class _ProfileBioStepState extends State<ProfileBioStep> {
                 bottomPadding: 8.0,
               ),
               const SubtitleText(
-                text: 'Sua biografia pode ser vista por outras pessoas. Escreva o que quiser sobre você.',
+                text: 'Esse é seu momento de se apresentar. Fale sobre sua trajetória, suas metas e sua paixão pelo futsal.',
               ),
             const SizedBox(height: 32),
             Container(
@@ -98,7 +98,7 @@ class _ProfileBioStepState extends State<ProfileBioStep> {
                   LengthLimitingTextInputFormatter(_maxBioLength),
                 ],
                 decoration: const InputDecoration(
-                  hintText: 'Ex: Sou jogador de futsal há 10 anos, com experiência em competições universitárias. Tenho como objetivo me profissionalizar e representar a seleção brasileira.',
+                  hintText: 'Ex: Jogo futsal desde os 10 anos, com experiência em competições universitárias. Tenho como objetivo me profissionalizar e representar a seleção brasileira.',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(16),
                 ),
@@ -139,7 +139,6 @@ class _ProfileBioStepState extends State<ProfileBioStep> {
                   _buildTip('Mencione sua experiência no futsal'),
                   _buildTip('Descreva suas principais habilidades'),
                   _buildTip('Indique seus objetivos na carreira'),
-                  _buildTip('Adicione conquistas relevantes'),
                 ],
               ),
             ),

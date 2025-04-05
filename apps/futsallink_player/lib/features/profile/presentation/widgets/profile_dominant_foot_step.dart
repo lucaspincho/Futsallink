@@ -50,24 +50,42 @@ class _ProfileDominantFootStepState extends State<ProfileDominantFootStep> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const ScreenTitle(
-              text: 'QUAL SEU PÉ DOMINANTE?',
-              bottomPadding: 8.0,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-            const SubtitleText(
-              text: 'Selecione o pé com o qual você tem mais habilidade',
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const ScreenTitle(
+                    text: 'QUAL SEU PÉ DOMINANTE?',
+                    bottomPadding: 8.0,
+                  ),
+                  
+
+                  const SubtitleText(
+                    text: 'Selecione o pé com o qual você tem mais habilidade.',
+                  ),
+                  
+                  const SizedBox(height: 40),
+                  
+                  // Opções de pé dominante
+                  ...dominantFootOptions.map((option) => _buildFootTile(option)),
+                  
+                  // Espaçamento extra no final (como no ProfileNameStep)
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
-            const SizedBox(height: 32),
-            ...dominantFootOptions.map((option) => _buildFootTile(option)),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
