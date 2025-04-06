@@ -46,80 +46,79 @@ class _ProfileTeamStepState extends State<ProfileTeamStep> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          onChanged: _updateTeam,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const ScreenTitle(
-                text: 'QUAL SEU TIME?',
-                bottomPadding: 8.0,
-              ),
-              const SubtitleText(
-                text: 'Infome-nos o seu time atual. Caso não esteja em nenhum clube, não marque a opção e aperte em avançar.',
-              ),
-              const SizedBox(height: 32),
-              TextFormField(
-                controller: _teamController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome do Time *',
-                  hintText: 'Ex: Futsal Clube Brasileiro',
-                  prefixIcon: Icon(Icons.sports_soccer),
-                ),
-                textCapitalization: TextCapitalization.words,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'O nome do time é obrigatório';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Caso não esteja vinculado a nenhum time no momento, digite "Sem clube"',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Form(
+                key: _formKey,
+                onChanged: _updateTeam,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(Icons.info_outline, color: Colors.blue),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'Esta informação ajuda clubes e olheiros a entenderem seu histórico e experiência atual.',
-                        style: TextStyle(fontSize: 14),
+                    const ScreenTitle(
+                      text: 'QUAL SEU TIME?',
+                      bottomPadding: 8.0,
+                    ),
+                    
+                    const SubtitleText(
+                      text: 'Infome-nos o seu time atual. Caso não esteja em nenhum clube, não marque a opção e aperte em avançar.',
+                    ),
+                    
+                    const SizedBox(height: 48),
+                    
+                    // Campo de time
+                    CustomTextField(
+                      hintText: 'Nome do Time*',
+                      controller: _teamController,
+                      textCapitalization: TextCapitalization.words,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'O nome do time é obrigatório';
+                        }
+                        return null;
+                      },
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Texto de ajuda
+                    Text(
+                      'Caso não esteja vinculado a nenhum time no momento, digite "Sem clube"',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[400],
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
+                    
+                    const SizedBox(height: 24),                    
+                    
+                    // Nota sobre campos obrigatórios
+                    Text(
+                      '* Campo obrigatório',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[400],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    
+                    // Espaçamento extra no final (como nas outras telas)
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              const Text(
-                '* Campo obrigatório',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 } 

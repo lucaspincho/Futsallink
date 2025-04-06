@@ -31,133 +31,171 @@ class _ProfileConfirmationStepState extends State<ProfileConfirmationStep> {
         if (state is ProfileCreationActive) {
           final player = state.player;
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Confirme seus dados',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Espaçamento para separar o conteúdo do AppBar
+                        SizedBox(height: _calculateTopPadding(constraints.maxHeight)),
+                        
+                        const ScreenTitle(
+                          text: 'CONFIRME SEUS DADOS',
+                          bottomPadding: 8.0,
                         ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Verifique se todas as informações estão corretas antes de finalizar',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 24),
-                  // Seção de perfil
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Foto de perfil
-                      _buildProfileImage(player.profileImage),
-                      const SizedBox(width: 16),
-                      // Dados básicos
-                      Expanded(
-                        child: Column(
+                        
+                        const SubtitleText(
+                          text: 'Verifique se todas as informações estão corretas',
+                        ),
+                        
+                        const SizedBox(height: 32),
+                        
+                        // Seção de perfil
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              player.fullName,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                            // Foto de perfil
+                            _buildProfileImage(player.profileImage),
+                            const SizedBox(width: 16),
+                            // Dados básicos
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    player.fullName,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  if (player.nickname != null)
+                                    Text(
+                                      'Apelido: ${player.nickname}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontStyle: FontStyle.italic,
+                                        color: Colors.white.withOpacity(0.9),
+                                      ),
+                                    ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Idade: ${player.age} anos',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Posição: ${player.position}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Pé dominante: ${player.dominantFoot}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            if (player.nickname != null)
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        const Divider(color: Colors.grey),
+                        const SizedBox(height: 16),
+                        // Informações detalhadas
+                        _buildInfoSection('Dados Físicos', [
+                          'Altura: ${player.height} cm',
+                          'Peso: ${player.weight} kg',
+                        ]),
+                        const SizedBox(height: 16),
+                        _buildInfoSection('Informações de Clube', [
+                          'Time atual: ${player.currentTeam ?? "Não informado"}'
+                        ]),
+                        const SizedBox(height: 16),
+                        if (player.bio != null && player.bio!.isNotEmpty)
+                          _buildBioSection(player.bio!),
+                        const SizedBox(height: 24),
+                        // Card de confirmação com tema FutsalLink
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: FutsallinkColors.primary.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: FutsallinkColors.primary),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.check_circle, 
+                                      color: FutsallinkColors.primary, 
+                                      size: 26),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Tudo pronto!',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: FutsallinkColors.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
                               Text(
-                                'Apelido: ${player.nickname}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
+                                'Seu perfil está completo e pronto para ser criado. Clique em "Concluir" para finalizar.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white.withOpacity(0.9),
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Idade: ${player.age} anos',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              'Posição: ${player.position}',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              'Pé dominante: ${player.dominantFoot}',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  // Informações detalhadas
-                  _buildInfoSection('Dados Físicos', [
-                    'Altura: ${player.height} cm',
-                    'Peso: ${player.weight} kg',
-                  ]),
-                  const SizedBox(height: 16),
-                  _buildInfoSection('Informações de Clube', [
-                    'Time atual: ${player.currentTeam ?? "Não informado"}'
-                  ]),
-                  const SizedBox(height: 16),
-                  if (player.bio != null && player.bio!.isNotEmpty)
-                    _buildBioSection(player.bio!),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green),
-                    ),
-                    child: const Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.check_circle, color: Colors.green),
-                            SizedBox(width: 8),
-                            Text(
-                              'Tudo pronto!',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 16),
                         Text(
-                          'Seu perfil está completo e pronto para ser criado. Clique em "Concluir" para finalizar.',
-                          style: TextStyle(fontSize: 14),
+                          'Após a conclusão, você poderá editar seu perfil a qualquer momento.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[400],
+                            fontStyle: FontStyle.italic,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
+                        
+                        // Espaçamento extra no final
+                        const SizedBox(height: 32),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Após a conclusão, você poderá editar seu perfil a qualquer momento.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         }
 
         return const Center(
-          child: Text('Carregando dados do perfil...'),
+          child: Text(
+            'Carregando dados do perfil...',
+            style: TextStyle(color: Colors.white),
+          ),
         );
       },
     );
@@ -181,6 +219,7 @@ class _ProfileConfirmationStepState extends State<ProfileConfirmationStep> {
                   value: loadingProgress.expectedTotalBytes != null
                       ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                       : null,
+                  color: FutsallinkColors.primary,
                 ),
               );
             },
@@ -193,13 +232,13 @@ class _ProfileConfirmationStepState extends State<ProfileConfirmationStep> {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: Colors.grey[700],
         shape: BoxShape.circle,
       ),
-      child: const Icon(
+      child: Icon(
         Icons.person,
         size: 40,
-        color: Colors.grey,
+        color: Colors.grey[300],
       ),
     );
   }
@@ -210,9 +249,10 @@ class _ProfileConfirmationStepState extends State<ProfileConfirmationStep> {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: FutsallinkColors.primary,
           ),
         ),
         const SizedBox(height: 8),
@@ -220,7 +260,10 @@ class _ProfileConfirmationStepState extends State<ProfileConfirmationStep> {
               padding: const EdgeInsets.only(bottom: 4.0),
               child: Text(
                 item,
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white.withOpacity(0.9),
+                ),
               ),
             )),
       ],
@@ -231,11 +274,12 @@ class _ProfileConfirmationStepState extends State<ProfileConfirmationStep> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Biografia',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: FutsallinkColors.primary,
           ),
         ),
         const SizedBox(height: 8),
@@ -243,16 +287,31 @@ class _ProfileConfirmationStepState extends State<ProfileConfirmationStep> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[300]!),
+            color: Colors.grey[800],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[600]!),
           ),
           child: Text(
             bio,
-            style: const TextStyle(fontSize: 16),
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white.withOpacity(0.9),
+            ),
           ),
         ),
       ],
     );
+  }
+
+  // Método para calcular o padding superior adequado
+  double _calculateTopPadding(double screenHeight) {
+    // Padding mínimo para telas pequenas
+    const double minPadding = 24.0;
+    
+    // Padding proporcional à altura da tela (4% da altura)
+    final proportionalPadding = screenHeight * 0.04;
+    
+    // Usa o maior valor entre o mínimo e o proporcional
+    return proportionalPadding > minPadding ? proportionalPadding : minPadding;
   }
 } 

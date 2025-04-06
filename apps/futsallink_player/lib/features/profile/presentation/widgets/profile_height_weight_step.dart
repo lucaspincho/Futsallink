@@ -161,20 +161,8 @@ class _ProfileHeightWeightStepState extends State<ProfileHeightWeightStep> {
                         return null;
                       },
                       onChanged: (value) => _updatePlayerInfo(),
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Nota sobre campos obrigatórios
-                    Text(
-                      '* Campos obrigatórios',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[400],
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    
+                    ),                                        
+                                        
                     // Espaçamento extra no final (como nas outras telas)
                     const SizedBox(height: 32),
                   ],

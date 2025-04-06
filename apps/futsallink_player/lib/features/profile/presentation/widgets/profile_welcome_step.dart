@@ -17,55 +17,61 @@ class ProfileWelcomeStep extends StatelessWidget {
       }
     });
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            Text(
-              'Bem-vindo ao Futsallink!',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: FutsallinkColors.primary,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const ScreenTitle(
+                    text: 'BEM-VINDO AO FUTSALLINK!',
+                    bottomPadding: 8.0,
                   ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Vamos criar seu perfil de jogador',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Nas próximas telas você irá preencher informações importantes que ajudarão clubes e olheiros a te encontrar.',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Você precisará informar:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            _buildListItem(context, 'Seus dados pessoais', Icons.person),
-            _buildListItem(context, 'Data de nascimento', Icons.calendar_today),
-            _buildListItem(context, 'Posição em que joga', Icons.sports_soccer),
-            _buildListItem(context, 'Pé dominante', Icons.accessibility_new),
-            _buildListItem(context, 'Altura e peso', Icons.height),
-            _buildListItem(context, 'Uma foto para seu perfil', Icons.photo_camera),
-            _buildListItem(context, 'Sua biografia e time atual', Icons.description),
-            const SizedBox(height: 24),
-            const Text(
-              'Não se preocupe, você poderá editar essas informações posteriormente.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                fontStyle: FontStyle.italic,
+                  
+                  const SubtitleText(
+                    text: 'Vamos criar seu perfil de jogador',
+                  ),
+                  
+                  const SizedBox(height: 48),
+                  
+                  // Texto explicativo principal
+                  Text(
+                    'Nas próximas telas você irá preencher informações importantes que ajudarão clubes e olheiros a te encontrar.',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Nota de rodapé
+                  Text(
+                    'Não se preocupe, você poderá editar essas informações posteriormente.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[400],
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  // Espaçamento extra no final (como nas outras telas)
+                  const SizedBox(height: 32),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -80,9 +86,14 @@ class ProfileWelcomeStep extends StatelessWidget {
             size: 24,
           ),
           const SizedBox(width: 12),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 16),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white.withOpacity(0.9),
+              ),
+            ),
           ),
         ],
       ),
