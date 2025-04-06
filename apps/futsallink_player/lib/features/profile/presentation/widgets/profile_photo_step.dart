@@ -25,8 +25,9 @@ class _ProfilePhotoStepState extends State<ProfilePhotoStep> {
   void _initializeStep() {
     final state = context.read<ProfileCreationCubit>().state;
     if (state is ProfileCreationActive) {
-      if (state.player.profileImage != null && state.player.profileImage!.isNotEmpty) {
-        // A imagem já foi carregada, marcamos a etapa como válida
+      // Marca a etapa como válida independentemente da foto
+      // já que esta etapa é opcional
+      if (!state.isCurrentStepValid) {
         context.read<ProfileCreationCubit>().emit(state.copyWith(isCurrentStepValid: true));
       }
     }
@@ -150,26 +151,45 @@ class _ProfilePhotoStepState extends State<ProfilePhotoStep> {
                           ),
                         ),
                         
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       
-                      Center(
-                        child: TextButton(
-                          onPressed: () {
-                            // Marca a etapa como válida e avança
-                            if (state is ProfileCreationActive) {
-                              context.read<ProfileCreationCubit>().emit(
-                                state.copyWith(isCurrentStepValid: true),
-                              );
-                              context.read<ProfileCreationCubit>().goToNextStep();
-                            }
-                          },
-                          child: const Text(
-                            'Pular esta etapa',
-                            style: TextStyle(
-                              color: FutsallinkColors.primary,
-                              fontSize: 16,
+                      // Texto informativo sobre a foto ser opcional
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  color: FutsallinkColors.primary,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Foto de perfil é opcional',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Uma boa foto de perfil aumenta suas chances de ser notado por clubes e empresários. Você pode adicionar ou alterar sua foto a qualquer momento.',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.8),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       
