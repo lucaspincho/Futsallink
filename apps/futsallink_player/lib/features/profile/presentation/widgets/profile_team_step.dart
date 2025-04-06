@@ -68,7 +68,7 @@ class _ProfileTeamStepState extends State<ProfileTeamStep> {
                     ),
                     
                     const SubtitleText(
-                      text: 'Infome-nos o seu time atual. Caso não esteja em nenhum clube, não marque a opção e aperte em avançar.',
+                      text: 'Informe se está em um time. Isso ajuda empresários e clubes a entenderem seu momento atual.',
                     ),
                     
                     const SizedBox(height: 48),
@@ -91,18 +91,6 @@ class _ProfileTeamStepState extends State<ProfileTeamStep> {
                     // Texto de ajuda
                     Text(
                       'Caso não esteja vinculado a nenhum time no momento, digite "Sem clube"',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[400],
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 24),                    
-                    
-                    // Nota sobre campos obrigatórios
-                    Text(
-                      '* Campo obrigatório',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[400],
