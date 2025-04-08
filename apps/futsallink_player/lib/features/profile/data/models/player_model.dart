@@ -50,7 +50,10 @@ class PlayerModel extends Player {
     final int lastCompletedStep = json['lastCompletedStep'] as int? ?? 0;
     
     ProfileCompletionStatus completionStatus;
-    if (profileCompleted) {
+    if (json['completionStatus'] != null) {
+      final int statusIndex = json['completionStatus'] as int;
+      completionStatus = ProfileCompletionStatus.values[statusIndex];
+    } else if (profileCompleted) {
       completionStatus = ProfileCompletionStatus.complete;
     } else if (lastCompletedStep > 0) {
       completionStatus = ProfileCompletionStatus.partial;
@@ -120,6 +123,7 @@ class PlayerModel extends Player {
       'updatedAt': updatedAt.toIso8601String(),
       'profileCompleted': profileCompleted,
       'lastCompletedStep': lastCompletedStep,
+      'completionStatus': completionStatus.index,
     };
   }
 

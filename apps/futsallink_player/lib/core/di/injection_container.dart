@@ -8,6 +8,9 @@ import 'package:futsallink_core/domain/usecases/player/upload_profile_image.dart
 import 'package:futsallink_firebase/futsallink_firebase.dart';
 import 'package:futsallink_player/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:futsallink_player/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:futsallink_player/features/home/data/repositories/home_repository_impl.dart';
+import 'package:futsallink_player/features/home/domain/repositories/home_repository.dart';
+import 'package:futsallink_player/features/home/presentation/cubit/home_cubit.dart';
 import 'package:futsallink_player/features/profile/data/datasources/player_remote_data_source.dart';
 import 'package:futsallink_player/features/profile/data/repositories/player_repository_impl.dart';
 import 'package:futsallink_player/features/profile/presentation/cubit/profile_creation_cubit.dart';
@@ -47,6 +50,11 @@ Future<void> initDependencies() async {
 
   sl.registerLazySingleton<PlayerRepository>(
     () => PlayerRepositoryImpl(remoteDataSource: sl<PlayerRemoteDataSource>()),
+  );
+  
+  // Home Repository
+  sl.registerLazySingleton<HomeRepository>(
+    () => HomeRepositoryImpl(),
   );
 
   //===== Use Cases =====
@@ -114,6 +122,13 @@ Future<void> initDependencies() async {
       getLastCompletedStep: sl<GetLastCompletedStep>(),
       savePartialProfile: sl<SavePartialProfile>(),
       getPlayer: sl<GetPlayer>(),
+    ),
+  );
+  
+  // Home Cubit
+  sl.registerFactory<HomeCubit>(
+    () => HomeCubit(
+      homeRepository: sl<HomeRepository>(),
     ),
   );
 

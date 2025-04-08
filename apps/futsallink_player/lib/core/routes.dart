@@ -1,6 +1,7 @@
 // Em apps/futsallink_player/lib/core/routes.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:futsallink_core/futsallink_core.dart';
 import 'package:futsallink_player/features/auth/presentation/pages/login_page.dart';
 import 'package:futsallink_player/features/auth/presentation/pages/email_verification_page.dart';
@@ -16,6 +17,8 @@ import 'package:futsallink_player/features/auth/presentation/pages/reset_passwor
 import 'package:futsallink_player/features/auth/presentation/pages/new_password_form_page.dart';
 import 'package:futsallink_player/features/home/presentation/pages/home_page.dart';
 import 'package:futsallink_player/features/profile/presentation/pages/profile_creation_page.dart';
+import 'package:futsallink_player/core/di/injection_container.dart';
+import 'package:futsallink_player/features/home/presentation/cubit/home_cubit.dart';
 
 // Rotas da aplicação
 final Map<String, WidgetBuilder> appRoutes = {
@@ -95,7 +98,10 @@ final Map<String, WidgetBuilder> appRoutes = {
   },
   
   // Outras rotas da aplicação
-  '/home': (context) => const HomePage(),
+  '/home': (context) => BlocProvider<HomeCubit>(
+    create: (context) => sl<HomeCubit>(),
+    child: const HomePage(),
+  ),
   // Adicione outras rotas aqui
 };
 

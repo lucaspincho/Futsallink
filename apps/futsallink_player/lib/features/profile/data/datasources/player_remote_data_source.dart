@@ -136,6 +136,7 @@ class PlayerRemoteDataSourceImpl implements PlayerRemoteDataSource {
         'players/$uid',
         {
           'profileCompleted': true,
+          'completionStatus': 2, // Valor de ProfileCompletionStatus.complete
           'updatedAt': DateTime.now().toIso8601String(),
         },
       );

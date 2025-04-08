@@ -416,6 +416,7 @@ class ProfileCreationCubit extends Cubit<ProfileCreationState> {
         emit(currentState.copyWith(isSubmitting: true));
         
         final updatedPlayer = (currentState.player as PlayerModel).copyWith(
+          profileCompleted: true,
           completionStatus: ProfileCompletionStatus.complete,
           updatedAt: DateTime.now(),
         );
