@@ -80,7 +80,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    # Assets da raiz do projeto
     - ../../assets/images/
+    - ../../assets/images/escudos/
     - ../../assets/icons/
     - ../../assets/animations/
   

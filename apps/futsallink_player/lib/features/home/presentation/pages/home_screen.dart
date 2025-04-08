@@ -62,11 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
               slivers: [
                 // Header com logo e ícone de configurações
                 SliverToBoxAdapter(
                   child: FutsallinkHeader(
                     onSettingsTap: _onSettingsTap,
+                    isHomePage: true, // Usando a versão específica para a Home
                   ),
                 ),
 
@@ -83,15 +85,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Lista horizontal de cards de seletivas
                 SliverToBoxAdapter(
                   child: SizedBox(
-                    height: 260,
+                    height: 280,
                     child: state.tryouts.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Text(
                               'Nenhuma seletiva disponível no momento.',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.7),
+                                fontSize: 16,
+                              ),
                             ),
                           )
                         : ListView.builder(
+                            padding: const EdgeInsets.only(right: FutsallinkSpacing.lg),
+                            physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.horizontal,
                             itemCount: state.tryouts.length,
                             itemBuilder: (context, index) {
@@ -119,12 +126,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Grid de clubes
                 SliverPadding(
-                  padding: const EdgeInsets.all(FutsallinkSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: FutsallinkSpacing.lg,
+                    vertical: FutsallinkSpacing.md,
+                  ),
                   sliver: SliverGrid(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
                       childAspectRatio: 1,
                     ),
                     delegate: SliverChildBuilderDelegate(
@@ -147,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Espaço para a barra de navegação
                 const SliverToBoxAdapter(
-                  child: SizedBox(height: 70),
+                  child: SizedBox(height: 80),
                 ),
               ],
             );
