@@ -80,11 +80,12 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    # Assets da raiz do projeto
-    - ../../assets/images/
     - ../../assets/images/escudos/
+    - ../../assets/images/
     - ../../assets/icons/
     - ../../assets/animations/
+    # Escudos dos clubes
+    - ../../assets/images/escudos/
   
 # flutter_native_splash:
 #   color: "#212121"

@@ -32,9 +32,10 @@ class CustomLogoHeader extends StatelessWidget {
           // Logo centralizado
           Center(
             child: SvgPicture.asset(
-              'assets/logo.svg',
+              'assets/images/logo.svg',
               height: logoSize,
               width: logoSize,
+              package: 'futsallink_ui',
             ),
           ),
           

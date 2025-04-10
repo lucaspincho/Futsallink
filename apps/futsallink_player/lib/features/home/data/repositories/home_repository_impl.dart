@@ -12,22 +12,6 @@ class HomeRepositoryImpl implements HomeRepository {
     return [
       ClubModel(
         id: '1',
-        name: 'ABC F.C.',
-        logoUrl: '', // Será carregado como imagem local
-        categories: ['Sub-15'],
-        positions: ['Fixo'],
-        hasTryouts: true,
-      ),
-      ClubModel(
-        id: '2',
-        name: 'América F.C.',
-        logoUrl: '', // Será carregado como imagem local
-        categories: ['Sub-15'],
-        positions: ['Fixo'],
-        hasTryouts: true,
-      ),
-      ClubModel(
-        id: '3',
         name: 'Sport Club do Recife',
         logoUrl: '', // Será carregado como imagem local
         categories: ['Sub-15'],
@@ -35,11 +19,27 @@ class HomeRepositoryImpl implements HomeRepository {
         hasTryouts: true,
       ),
       ClubModel(
-        id: '4',
+        id: '2',
+        name: 'América MG',
+        logoUrl: '', // Será carregado como imagem local
+        categories: ['Sub-15'],
+        positions: ['Fixo'],
+        hasTryouts: true,
+      ),
+      ClubModel(
+        id: '3',
         name: 'Corinthians',
         logoUrl: '', // Será carregado como imagem local
         categories: ['Sub-17'],
         positions: ['Pivô'],
+        hasTryouts: true,
+      ),
+      ClubModel(
+        id: '4',
+        name: 'Náutico',
+        logoUrl: '', // Será carregado como imagem local
+        categories: ['Sub-17'],
+        positions: ['Ala'],
         hasTryouts: true,
       ),
       ClubModel(
@@ -52,7 +52,7 @@ class HomeRepositoryImpl implements HomeRepository {
       ),
       ClubModel(
         id: '6',
-        name: 'Goiás',
+        name: 'Santa Cruz',
         logoUrl: '', // Será carregado como imagem local
         categories: ['Sub-17'],
         positions: ['Goleiro'],
@@ -60,7 +60,7 @@ class HomeRepositoryImpl implements HomeRepository {
       ),
       ClubModel(
         id: '7',
-        name: 'Náutico',
+        name: 'Goiás',
         logoUrl: '', // Será carregado como imagem local
         categories: ['Sub-15'],
         positions: ['Ala'],
@@ -87,7 +87,7 @@ class HomeRepositoryImpl implements HomeRepository {
       TryoutModel(
         id: '1',
         clubId: '1',
-        clubName: 'ABC F.C.',
+        clubName: 'Sport Club do Recife',
         clubLogoUrl: '', // Será carregado como imagem local
         category: 'Sub-15',
         position: 'Fixo',
@@ -96,7 +96,7 @@ class HomeRepositoryImpl implements HomeRepository {
       TryoutModel(
         id: '2',
         clubId: '2',
-        clubName: 'América F.C.',
+        clubName: 'América MG',
         clubLogoUrl: '', // Será carregado como imagem local
         category: 'Sub-15',
         position: 'Fixo',
@@ -105,19 +105,19 @@ class HomeRepositoryImpl implements HomeRepository {
       TryoutModel(
         id: '3',
         clubId: '3',
-        clubName: 'Sport Club do Recife',
+        clubName: 'Corinthians',
         clubLogoUrl: '', // Será carregado como imagem local
-        category: 'Sub-15',
-        position: 'Fixo',
+        category: 'Sub-17',
+        position: 'Pivô',
         isOpen: true,
       ),
       TryoutModel(
         id: '4',
         clubId: '4',
-        clubName: 'Corinthians',
+        clubName: 'Náutico',
         clubLogoUrl: '', // Será carregado como imagem local
         category: 'Sub-17',
-        position: 'Pivô',
+        position: 'Ala',
         isOpen: true,
       ),
     ];

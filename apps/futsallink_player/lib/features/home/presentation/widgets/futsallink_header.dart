@@ -18,7 +18,7 @@ class FutsallinkHeader extends StatelessWidget {
     if (isHomePage) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(
-          FutsallinkSpacing.lg,
+          FutsallinkSpacing.md,
           FutsallinkSpacing.xl,
           FutsallinkSpacing.lg,
           FutsallinkSpacing.md,
@@ -27,33 +27,14 @@ class FutsallinkHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Logo do Futsallink
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: FutsallinkColors.primary.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SvgPicture.asset(
-                    'assets/images/logo.svg',
-                    package: 'futsallink_ui',
-                  ),
-                ),
-                const SizedBox(width: FutsallinkSpacing.sm),
-                Text(
-                  'Futsallink',
-                  style: FutsallinkTypography.headline2.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ],
+            // Logo do Futsallink (SVG completo incluindo o texto)
+            SvgPicture.asset(
+              'assets/images/logo.svg',
+              package: 'futsallink_ui',
+              height: 26,
+              width: 200,
+              fit: BoxFit.contain,
+              alignment: Alignment.centerLeft,
             ),
             
             // Ícone de configurações

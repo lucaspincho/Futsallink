@@ -18,14 +18,12 @@ class TryoutCard extends StatelessWidget {
   String _getClubLogoPath(String clubName) {
     final clubNameLower = clubName.toLowerCase();
     
-    if (clubNameLower.contains('abc')) {
-      return '../../assets/images/escudos/sport.png';
-    } else if (clubNameLower.contains('américa') || clubNameLower.contains('america')) {
-      return '../../assets/images/escudos/america_mineiro.png';
-    } else if (clubNameLower.contains('sport')) {
+    if (clubNameLower.contains('sport')) {
       return '../../assets/images/escudos/sport.png';
     } else if (clubNameLower.contains('corinthians')) {
       return '../../assets/images/escudos/corinthians.png';
+    } else if (clubNameLower.contains('américa') || clubNameLower.contains('america')) {
+      return '../../assets/images/escudos/america_mineiro.png';
     } else if (clubNameLower.contains('náutico') || clubNameLower.contains('nautico')) {
       return '../../assets/images/escudos/nautico.png';
     } else if (clubNameLower.contains('bahia')) {
@@ -40,18 +38,8 @@ class TryoutCard extends StatelessWidget {
       return '../../assets/images/escudos/atlantico_erechim.png';
     }
     
-    // Retorna um escudo correspondente ao primeiro caractere do nome para evitar duplicações
-    final firstChar = clubNameLower.isEmpty ? 'a' : clubNameLower[0];
-    switch (firstChar) {
-      case 'a': return '../../assets/images/escudos/america_mineiro.png';
-      case 'b': return '../../assets/images/escudos/bahia.png';
-      case 'c': return '../../assets/images/escudos/corinthians.png';
-      case 'g': return '../../assets/images/escudos/goias.png';
-      case 'j': return '../../assets/images/escudos/joinville.png';
-      case 'n': return '../../assets/images/escudos/nautico.png';
-      case 's': return '../../assets/images/escudos/santa_cruz.png';
-      default: return '../../assets/images/escudos/atlantico_erechim.png';
-    }
+    // Escudo padrão se não encontrar correspondência
+    return '../../assets/images/escudos/sport.png';
   }
 
   @override
@@ -133,8 +121,8 @@ class TryoutCard extends StatelessWidget {
                 children: [
                   // Logo do clube
                   Container(
-                    width: 110,
-                    height: 110,
+                    width: 90,
+                    height: 90,
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -147,7 +135,7 @@ class TryoutCard extends StatelessWidget {
                       ],
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(55),
+                      borderRadius: BorderRadius.circular(45),
                       child: Image.asset(
                         _getClubLogoPath(tryout.clubName),
                         fit: BoxFit.contain,
