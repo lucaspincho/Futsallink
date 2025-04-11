@@ -81,7 +81,16 @@ class BottomNavBar extends StatelessWidget {
     final color = isSelected ? FutsallinkColors.primary : Colors.grey;
 
     return InkWell(
-      onTap: () => onItemSelected(item),
+      onTap: () {
+        if (item != currentItem) {
+          if (item == NavItem.clubs) {
+            Navigator.pushNamed(context, '/clubs');
+            return;
+          }
+          
+          onItemSelected(item);
+        }
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

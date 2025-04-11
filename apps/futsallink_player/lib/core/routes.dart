@@ -27,6 +27,10 @@ import 'package:futsallink_player/features/clubs/presentation/pages/club_details
 import 'package:futsallink_player/features/clubs/presentation/bloc/club_details_cubit.dart';
 import 'package:futsallink_player/features/clubs/data/repositories/club_repository_impl.dart';
 import 'package:futsallink_player/features/clubs/domain/repositories/club_repository.dart';
+import 'package:futsallink_player/features/clubs/presentation/pages/clubs_screen.dart';
+import 'package:futsallink_player/features/clubs/presentation/bloc/clubs_cubit.dart';
+import 'package:futsallink_player/features/home/domain/repositories/home_repository.dart';
+import 'package:futsallink_player/features/home/data/repositories/home_repository_impl.dart';
 
 // Rotas da aplicação
 final Map<String, WidgetBuilder> appRoutes = {
@@ -134,6 +138,14 @@ final Map<String, WidgetBuilder> appRoutes = {
     return BlocProvider<ClubDetailsCubit>(
       create: (context) => ClubDetailsCubit(clubRepository),
       child: ClubDetailsScreen(clubId: clubId),
+    );
+  },
+  
+  // Lista de Clubes
+  '/clubs': (context) {
+    return BlocProvider<ClubsCubit>(
+      create: (context) => ClubsCubit(HomeRepositoryImpl()),
+      child: const ClubsScreen(),
     );
   },
   // Adicione outras rotas aqui

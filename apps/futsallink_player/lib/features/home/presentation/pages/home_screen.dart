@@ -125,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: 'Clubes',
                     onSeeMoreTap: () {
                       // Navegar para a página de todos os clubes
+                      Navigator.pushNamed(context, '/clubs');
                     },
                   ),
                 ),
