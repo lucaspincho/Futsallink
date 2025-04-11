@@ -19,6 +19,10 @@ import 'package:futsallink_player/features/home/presentation/pages/home_page.dar
 import 'package:futsallink_player/features/profile/presentation/pages/profile_creation_page.dart';
 import 'package:futsallink_player/core/di/injection_container.dart';
 import 'package:futsallink_player/features/home/presentation/cubit/home_cubit.dart';
+import 'package:futsallink_player/features/tryouts/presentation/pages/tryout_details_screen.dart';
+import 'package:futsallink_player/features/tryouts/presentation/bloc/tryout_details_cubit.dart';
+import 'package:futsallink_player/features/tryouts/data/repositories/tryout_repository_impl.dart';
+import 'package:futsallink_player/features/tryouts/domain/repositories/tryout_repository.dart';
 
 // Rotas da aplicação
 final Map<String, WidgetBuilder> appRoutes = {
@@ -102,6 +106,19 @@ final Map<String, WidgetBuilder> appRoutes = {
     create: (context) => sl<HomeCubit>(),
     child: const HomePage(),
   ),
+  
+  // Detalhes da seletiva
+  '/tryout-details': (context) {
+    final tryoutId = ModalRoute.of(context)?.settings.arguments as String;
+    
+    // Repositório para carregar detalhes da seletiva
+    final tryoutRepository = TryoutRepositoryImpl();
+    
+    return BlocProvider<TryoutDetailsCubit>(
+      create: (context) => TryoutDetailsCubit(tryoutRepository),
+      child: TryoutDetailsScreen(tryoutId: tryoutId),
+    );
+  },
   // Adicione outras rotas aqui
 };
 

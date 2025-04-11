@@ -107,6 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 tryout: tryout,
                                 onTap: () {
                                   // Navegar para a página de detalhes da seletiva
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/tryout-details',
+                                    arguments: tryout.id,
+                                  );
                                 },
                               );
                             },
