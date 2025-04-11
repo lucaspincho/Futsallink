@@ -35,7 +35,7 @@ class CustomLogoHeader extends StatelessWidget {
               'assets/images/logo.svg',
               height: logoSize,
               width: logoSize,
-              package: 'futsallink_ui',
+              // package: 'futsallink_ui',
             ),
           ),
           

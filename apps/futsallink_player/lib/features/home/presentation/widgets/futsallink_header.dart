@@ -18,7 +18,7 @@ class FutsallinkHeader extends StatelessWidget {
     if (isHomePage) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(
-          FutsallinkSpacing.md,
+          FutsallinkSpacing.lg,
           FutsallinkSpacing.xl,
           FutsallinkSpacing.lg,
           FutsallinkSpacing.md,
@@ -30,7 +30,6 @@ class FutsallinkHeader extends StatelessWidget {
             // Logo do Futsallink (SVG completo incluindo o texto)
             SvgPicture.asset(
               'assets/images/logo.svg',
-              package: 'futsallink_ui',
               height: 26,
               width: 200,
               fit: BoxFit.contain,
@@ -81,7 +80,6 @@ class FutsallinkHeader extends StatelessWidget {
                 ),
                 child: SvgPicture.asset(
                   'assets/images/logo.svg',
-                  package: 'futsallink_ui',
                 ),
               ),
               const SizedBox(width: FutsallinkSpacing.sm),

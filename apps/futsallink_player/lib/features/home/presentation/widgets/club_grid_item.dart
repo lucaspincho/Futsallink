@@ -17,27 +17,27 @@ class ClubGridItem extends StatelessWidget {
     final clubNameLower = clubName.toLowerCase();
     
     if (clubNameLower.contains('sport')) {
-      return '../../assets/images/escudos/sport.png';
+      return 'assets/images/escudos/sport.png';
     } else if (clubNameLower.contains('corinthians')) {
-      return '../../assets/images/escudos/corinthians.png';
+      return 'assets/images/escudos/corinthians.png';
     } else if (clubNameLower.contains('américa') || clubNameLower.contains('america')) {
-      return '../../assets/images/escudos/america_mineiro.png';
+      return 'assets/images/escudos/america_mineiro.png';
     } else if (clubNameLower.contains('náutico') || clubNameLower.contains('nautico')) {
-      return '../../assets/images/escudos/nautico.png';
+      return 'assets/images/escudos/nautico.png';
     } else if (clubNameLower.contains('bahia')) {
-      return '../../assets/images/escudos/bahia.png';
+      return 'assets/images/escudos/bahia.png';
     } else if (clubNameLower.contains('santa cruz')) {
-      return '../../assets/images/escudos/santa_cruz.png';
+      return 'assets/images/escudos/santa_cruz.png';
     } else if (clubNameLower.contains('joinville')) {
-      return '../../assets/images/escudos/joinville.png';
+      return 'assets/images/escudos/joinville.png';
     } else if (clubNameLower.contains('goiás') || clubNameLower.contains('goias')) {
-      return '../../assets/images/escudos/goias.png';
+      return 'assets/images/escudos/goias.png';
     } else if (clubNameLower.contains('atlântico') || clubNameLower.contains('atlantico')) {
-      return '../../assets/images/escudos/atlantico_erechim.png';
+      return 'assets/images/escudos/atlantico_erechim.png';
     }
     
     // Escudo padrão se não encontrar correspondência
-    return '../../assets/images/escudos/sport.png';
+    return 'assets/images/escudos/sport.png';
   }
 
   @override

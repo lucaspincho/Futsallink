@@ -19,7 +19,7 @@ class FutsallinkLogoHeader extends StatelessWidget {
         child: SvgPicture.asset(
           'assets/images/logo.svg',
           height: logoHeight,
-          package: 'futsallink_ui',
+          // package: 'futsallink_ui',
         ),
       ),
     );
