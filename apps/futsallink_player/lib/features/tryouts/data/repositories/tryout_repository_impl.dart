@@ -16,9 +16,23 @@ class TryoutRepositoryImpl implements TryoutRepository {
       category: 'Sub 15',
       position: 'Fixo',
       description: '''
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tincidunt feugiat augue quis facilisis. Integer malesuada imperdiet tortor. Nullam congue placerat eros, non varius velit facilisis eu. Aenean nisl dolor, porta eu urna sed, semper imperdiet lorem. Sed vitae mi vitae lectus congue venenatis. Nunc convallis, magna ut laoreet mattis, ante tortor lobortis ante, in efficitur sapien mauris non risus. Aenean ac quam eu velit tincidunt malesuada viverra id leo. Cras porttitor turpis non orci placerat, et pharetra justo volutpat. Curabitur turpis odio, ultricies eget efficitur sit amet, blandit a quam.
+      Mostre seu talento sem sair de casa! A seletiva para a categoria Sub-15, posição Fixo, do Sport Club do Recife será totalmente virtual e está com inscrições abertas.
 
-      Morbi lectus urna, vulputate in viverra ac, vehicula non neque. Suspendisse potenti. Maecenas porttitor venenatis turpis, sed imperdiet mi interdum in. Duis consectetur purus turpis, nec blandit nisl ullamcorper sed. Aliquam cursus nunc non nisi congue rhoncus. Quisque hendrerit tempus faucibus. Etiam in mollis magna, eget imperdiet felis. Duis euismod neque et risus varius finibus.
+      Após se inscrever, você deverá enviar um vídeo com duração entre 3 e 5 minutos demonstrando suas habilidades na posição de Fixo. O material será analisado pela equipe técnica do clube.
+
+      O vídeo deve conter:
+      - Jogadas defensivas (marcação, cobertura)
+      - Passes e posicionamento em quadra
+      - Início de jogadas e controle de bola
+      - Lances reais de partidas (se possível)
+
+      Pré-requisitos:
+
+      - Nascidos entre 2010 e 2011
+      - Vídeo gravado na horizontal, com boa qualidade de áudio e imagem
+      - Autorização dos pais ou responsáveis (se menor de idade)
+
+      Os atletas aprovados na fase de vídeo serão contatados para as próximas etapas do processo seletivo. Prepare-se e boa sorte!
       ''',
       isOpen: true,
     );

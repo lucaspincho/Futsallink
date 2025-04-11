@@ -152,6 +152,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           club: club,
                           onTap: () {
                             // Navegar para a página de detalhes do clube
+                            Navigator.pushNamed(
+                              context,
+                              '/club-details',
+                              arguments: club.id,
+                            );
                           },
                         );
                       },

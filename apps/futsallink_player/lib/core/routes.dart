@@ -23,6 +23,10 @@ import 'package:futsallink_player/features/tryouts/presentation/pages/tryout_det
 import 'package:futsallink_player/features/tryouts/presentation/bloc/tryout_details_cubit.dart';
 import 'package:futsallink_player/features/tryouts/data/repositories/tryout_repository_impl.dart';
 import 'package:futsallink_player/features/tryouts/domain/repositories/tryout_repository.dart';
+import 'package:futsallink_player/features/clubs/presentation/pages/club_details_screen.dart';
+import 'package:futsallink_player/features/clubs/presentation/bloc/club_details_cubit.dart';
+import 'package:futsallink_player/features/clubs/data/repositories/club_repository_impl.dart';
+import 'package:futsallink_player/features/clubs/domain/repositories/club_repository.dart';
 
 // Rotas da aplicação
 final Map<String, WidgetBuilder> appRoutes = {
@@ -117,6 +121,19 @@ final Map<String, WidgetBuilder> appRoutes = {
     return BlocProvider<TryoutDetailsCubit>(
       create: (context) => TryoutDetailsCubit(tryoutRepository),
       child: TryoutDetailsScreen(tryoutId: tryoutId),
+    );
+  },
+  
+  // Detalhes do clube
+  '/club-details': (context) {
+    final clubId = ModalRoute.of(context)?.settings.arguments as String;
+    
+    // Repositório para carregar detalhes do clube
+    final clubRepository = ClubRepositoryImpl();
+    
+    return BlocProvider<ClubDetailsCubit>(
+      create: (context) => ClubDetailsCubit(clubRepository),
+      child: ClubDetailsScreen(clubId: clubId),
     );
   },
   // Adicione outras rotas aqui
