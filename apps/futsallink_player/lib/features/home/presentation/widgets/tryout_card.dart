@@ -115,9 +115,10 @@ class TryoutCard extends StatelessWidget {
             
             // Conteúdo principal do card
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 50, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Logo do clube
                   Container(
@@ -126,6 +127,7 @@ class TryoutCard extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -134,38 +136,45 @@ class TryoutCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(45),
+                    child: Center(
                       child: Image.asset(
                         _getClubLogoPath(tryout.clubName),
                         fit: BoxFit.contain,
+                        width: 70,
+                        height: 70,
                       ),
                     ),
                   ),
                   
                   // Nome do clube
-                  Text(
-                    tryout.clubName,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: FutsallinkTypography.subtitle1.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: -0.2,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      tryout.clubName,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: FutsallinkTypography.subtitle1.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: -0.2,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   
                   // Categoria e posição
-                  Text(
-                    '${tryout.category} | ${tryout.position}',
-                    textAlign: TextAlign.center,
-                    style: FutsallinkTypography.body2.copyWith(
-                      fontSize: 14,
-                      color: Colors.white.withOpacity(0.6),
-                      fontWeight: FontWeight.w500,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      '${tryout.category} | ${tryout.position}',
+                      textAlign: TextAlign.center,
+                      style: FutsallinkTypography.body2.copyWith(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.6),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],

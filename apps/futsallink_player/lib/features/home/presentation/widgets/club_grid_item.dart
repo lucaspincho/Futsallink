@@ -47,37 +47,45 @@ class ClubGridItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.35),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+              spreadRadius: 1,
             ),
           ],
         ),
         child: Center(
-          child: Container(
-            width: 48,
-            height: 48,
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.transparent,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                  spreadRadius: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                width: 52,
+                height: 52,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.05),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: Image.asset(
-                _getClubLogoPath(club.name),
-                fit: BoxFit.contain,
+                child: Center(
+                  child: Image.asset(
+                    _getClubLogoPath(club.name),
+                    fit: BoxFit.contain,
+                    width: 42,
+                    height: 42,
+                  ),
+                ),
               ),
             ),
           ),
