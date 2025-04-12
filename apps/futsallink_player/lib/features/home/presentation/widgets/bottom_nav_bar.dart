@@ -89,6 +89,9 @@ class BottomNavBar extends StatelessWidget {
           } else if (item == NavItem.tryouts) {
             Navigator.pushNamed(context, '/tryouts');
             return;
+          } else if (item == NavItem.profile) {
+            Navigator.pushNamed(context, '/profile');
+            return;
           }
           
           onItemSelected(item);

@@ -45,6 +45,10 @@ class _TryoutsScreenState extends State<TryoutsScreen> {
       Navigator.pushReplacementNamed(context, '/home');
     } else if (item == NavItem.clubs) {
       Navigator.pushReplacementNamed(context, '/clubs');
+    } else if (item == NavItem.profile) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    } else if (item == NavItem.chat) {
+      // Implementar navegação para o chat quando estiver disponível
     }
   }
 

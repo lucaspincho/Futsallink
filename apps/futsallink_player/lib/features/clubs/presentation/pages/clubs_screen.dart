@@ -44,6 +44,12 @@ class _ClubsScreenState extends State<ClubsScreen> {
     // Navegar para a tela correspondente
     if (item == NavItem.home) {
       Navigator.pushReplacementNamed(context, '/home');
+    } else if (item == NavItem.tryouts) {
+      Navigator.pushReplacementNamed(context, '/tryouts');
+    } else if (item == NavItem.profile) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    } else if (item == NavItem.chat) {
+      // Implementar navegação para o chat quando estiver disponível
     }
   }
 

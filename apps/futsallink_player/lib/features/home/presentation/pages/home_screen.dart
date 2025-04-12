@@ -26,10 +26,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onNavItemSelected(NavItem item) {
-    setState(() {
-      _currentNavItem = item;
-    });
-    // Aqui você pode implementar a navegação para outras telas
+    if (item == _currentNavItem) return;
+    
+    if (item == NavItem.tryouts) {
+      Navigator.pushReplacementNamed(context, '/tryouts');
+    } else if (item == NavItem.clubs) {
+      Navigator.pushReplacementNamed(context, '/clubs');
+    } else if (item == NavItem.profile) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    } else if (item == NavItem.chat) {
+      // Implementar navegação para o chat quando estiver disponível
+    }
   }
 
   void _onSettingsTap() {
