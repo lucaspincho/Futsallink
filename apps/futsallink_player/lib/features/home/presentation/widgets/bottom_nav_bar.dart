@@ -86,6 +86,9 @@ class BottomNavBar extends StatelessWidget {
           if (item == NavItem.clubs) {
             Navigator.pushNamed(context, '/clubs');
             return;
+          } else if (item == NavItem.tryouts) {
+            Navigator.pushNamed(context, '/tryouts');
+            return;
           }
           
           onItemSelected(item);

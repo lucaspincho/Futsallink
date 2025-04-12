@@ -78,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: 'Seletivas',
                     onSeeMoreTap: () {
                       // Navegar para a página de todas as seletivas
+                      Navigator.pushNamed(context, '/tryouts');
                     },
                   ),
                 ),

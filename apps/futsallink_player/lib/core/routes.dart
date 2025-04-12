@@ -31,6 +31,8 @@ import 'package:futsallink_player/features/clubs/presentation/pages/clubs_screen
 import 'package:futsallink_player/features/clubs/presentation/bloc/clubs_cubit.dart';
 import 'package:futsallink_player/features/home/domain/repositories/home_repository.dart';
 import 'package:futsallink_player/features/home/data/repositories/home_repository_impl.dart';
+import 'package:futsallink_player/features/tryouts/presentation/pages/tryouts_screen.dart';
+import 'package:futsallink_player/features/tryouts/presentation/bloc/tryouts_cubit.dart';
 
 // Rotas da aplicação
 final Map<String, WidgetBuilder> appRoutes = {
@@ -146,6 +148,14 @@ final Map<String, WidgetBuilder> appRoutes = {
     return BlocProvider<ClubsCubit>(
       create: (context) => ClubsCubit(HomeRepositoryImpl()),
       child: const ClubsScreen(),
+    );
+  },
+  
+  // Lista de Seletivas
+  '/tryouts': (context) {
+    return BlocProvider<TryoutsCubit>(
+      create: (context) => TryoutsCubit(HomeRepositoryImpl()),
+      child: const TryoutsScreen(),
     );
   },
   // Adicione outras rotas aqui
