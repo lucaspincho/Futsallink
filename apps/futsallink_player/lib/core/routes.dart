@@ -18,6 +18,7 @@ import 'package:futsallink_player/features/auth/presentation/pages/new_password_
 import 'package:futsallink_player/features/home/presentation/pages/home_page.dart';
 import 'package:futsallink_player/features/profile/presentation/pages/profile_creation_page.dart';
 import 'package:futsallink_player/features/profile/presentation/pages/profile_page.dart';
+import 'package:futsallink_player/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:futsallink_player/core/di/injection_container.dart';
 import 'package:futsallink_player/features/home/presentation/cubit/home_cubit.dart';
 import 'package:futsallink_player/features/tryouts/presentation/pages/tryout_details_screen.dart';
@@ -114,6 +115,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   
   // Perfil do jogador
   '/profile': (context) => const ProfilePage(),
+  '/profile/edit': (context) => const ProfileEditPage(),
   
   // Outras rotas da aplicação
   '/home': (context) => BlocProvider<HomeCubit>(

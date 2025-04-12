@@ -236,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildEditProfileButton() {
     return ElevatedButton(
       onPressed: () {
-        // Ação será implementada posteriormente
+        Navigator.pushNamed(context, '/profile/edit');
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: FutsallinkColors.primary,

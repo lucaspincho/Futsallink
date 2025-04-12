@@ -14,6 +14,7 @@ import 'package:futsallink_player/features/home/presentation/cubit/home_cubit.da
 import 'package:futsallink_player/features/profile/data/datasources/player_remote_data_source.dart';
 import 'package:futsallink_player/features/profile/data/repositories/player_repository_impl.dart';
 import 'package:futsallink_player/features/profile/presentation/cubit/profile_creation_cubit.dart';
+import 'package:futsallink_player/features/profile/presentation/cubit/profile_edit_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:futsallink_core/domain/usecases/player/get_profile_completion_status.dart';
 import 'package:futsallink_core/domain/usecases/player/get_last_completed_step.dart';
@@ -122,6 +123,15 @@ Future<void> initDependencies() async {
       getLastCompletedStep: sl<GetLastCompletedStep>(),
       savePartialProfile: sl<SavePartialProfile>(),
       getPlayer: sl<GetPlayer>(),
+    ),
+  );
+  
+  // Profile Edit Cubit
+  sl.registerFactory<ProfileEditCubit>(
+    () => ProfileEditCubit(
+      getPlayer: sl<GetPlayer>(),
+      playerRepository: sl<PlayerRepository>(),
+      getCurrentUser: sl<GetCurrentUserUseCase>(),
     ),
   );
   
