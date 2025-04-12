@@ -5,7 +5,7 @@ import 'package:futsallink_ui/futsallink_ui.dart';
 import 'package:futsallink_player/features/home/presentation/widgets/bottom_nav_bar.dart';
 import 'package:futsallink_player/features/home/presentation/widgets/club_grid_item.dart';
 import 'package:futsallink_player/features/home/presentation/widgets/section_header.dart';
-import 'package:futsallink_player/features/tryouts/presentation/widgets/back_header.dart';
+import 'package:futsallink_player/features/home/presentation/widgets/futsallink_header.dart';
 import '../bloc/clubs_cubit.dart';
 import '../bloc/clubs_state.dart';
 import '../widgets/search_field.dart';
@@ -55,11 +55,12 @@ class _ClubsScreenState extends State<ClubsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header com logo e botão de voltar
-            BackHeader(
-              onBackTap: widget.showBackButton 
-                ? () => Navigator.of(context).pop() 
-                : null,
+            // Header com logo e configurações
+            FutsallinkHeader(
+              isHomePage: true,
+              onSettingsTap: () {
+                Navigator.pushNamed(context, '/settings');
+              },
             ),
             
             // Título da seção "Clubes"
