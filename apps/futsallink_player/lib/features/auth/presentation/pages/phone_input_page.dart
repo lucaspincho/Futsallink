@@ -143,11 +143,6 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FutsallinkColors.darkBackground,
-      appBar: AppBar(
-        title: const Text('Verificação por Telefone'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthErrorState) {
@@ -177,150 +172,142 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
               padding: const EdgeInsets.all(FutsallinkSpacing.md),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: FutsallinkSpacing.lg),
-                    Icon(
-                      Icons.phone_android,
-                      size: 80,
-                      color: FutsallinkColors.primary,
-                    ),
-                    const SizedBox(height: FutsallinkSpacing.lg),
-                    Text(
-                      'Insira seu número de telefone',
-                      style: FutsallinkTypography.headline1.copyWith(
-                        color: Colors.white,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CustomLogoHeader(
+                        showBackButton: true,
+                        onBackPressed: () => Navigator.of(context).pop(),
+                        bottomPadding: 60,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: FutsallinkSpacing.md),
-                    Text(
-                      'Enviaremos um código de verificação por SMS',
-                      style: FutsallinkTypography.headline2.copyWith(
-                        color: Colors.white70,
+                      
+                      const SizedBox(height: FutsallinkSpacing.lg),
+                      
+                      const ScreenTitle(
+                        text: 'Verificação por Telefone',
+                        bottomPadding: 8.0,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: FutsallinkSpacing.xl),
-                    
-                    // Seletor de país melhorado
-                    InkWell(
-                      onTap: _showCountryPicker,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: FutsallinkColors.cardBackground,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _selectedCountry.flagEmoji,
-                              style: const TextStyle(fontSize: 24),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _selectedCountry.name,
-                                    style: FutsallinkTypography.body1.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    '+${_selectedCountry.phoneCode}',
-                                    style: FutsallinkTypography.body2.copyWith(
-                                      color: Colors.amberAccent,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                      const SizedBox(height: FutsallinkSpacing.sm),
+                      const SubtitleText(
+                        text: 'Enviaremos um código de verificação por SMS',
+                      ),
+                      
+                      const SizedBox(height: FutsallinkSpacing.xl),
+                      
+                      InkWell(
+                        onTap: _showCountryPicker,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: FutsallinkColors.cardBackground,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _selectedCountry.flagEmoji,
+                                style: const TextStyle(fontSize: 24),
                               ),
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.white70,
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _selectedCountry.name,
+                                      style: FutsallinkTypography.body1.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      '+${_selectedCountry.phoneCode}',
+                                      style: FutsallinkTypography.body2.copyWith(
+                                        color: Colors.amberAccent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white70,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // Input de telefone
-                    TextFormField(
-                      controller: _phoneController,
-                      decoration: InputDecoration(
-                        hintText: _selectedCountry.example,
-                        prefixIcon: const Icon(Icons.phone, color: Colors.white54),
-                        filled: true,
-                        fillColor: FutsallinkColors.cardBackground,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                      
+                      const SizedBox(height: 16),
+                      
+                      TextFormField(
+                        controller: _phoneController,
+                        decoration: InputDecoration(
+                          hintText: _selectedCountry.example,
+                          prefixIcon: const Icon(Icons.phone, color: Colors.white54),
+                          filled: true,
+                          fillColor: FutsallinkColors.cardBackground,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
+                        style: FutsallinkTypography.body1.copyWith(
+                          color: Colors.white,
+                        ),
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          TextInputFormatter.withFunction(
+                            (oldValue, newValue) {
+                              // Limita o número máximo de dígitos com base no país
+                              int maxLength = 11; // Padrão (Brasil)
+                              if (_selectedCountry.countryCode != 'BR') {
+                                maxLength = 15; // Outros países
+                              }
+                              
+                              final text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+                              if (text.length > maxLength) {
+                                return oldValue;
+                              }
+                              
+                              // Formata o número conforme digita
+                              final formattedText = _formatPhoneNumber(text);
+                              return TextEditingValue(
+                                text: formattedText,
+                                selection: TextSelection.collapsed(offset: formattedText.length),
+                              );
+                            },
+                          ),
+                        ],
+                        validator: _validatePhone,
                       ),
-                      style: FutsallinkTypography.body1.copyWith(
-                        color: Colors.white,
+                      
+                      const SizedBox(height: FutsallinkSpacing.xl),
+                      
+                      PrimaryButton(
+                        text: 'ENVIAR',
+                        isLoading: state is AuthLoading || _isSubmitting,
+                        onPressed: state is AuthLoading || _isSubmitting ? null : _initiateVerification,
                       ),
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        TextInputFormatter.withFunction(
-                          (oldValue, newValue) {
-                            // Limita o número máximo de dígitos com base no país
-                            int maxLength = 11; // Padrão (Brasil)
-                            if (_selectedCountry.countryCode != 'BR') {
-                              maxLength = 15; // Outros países
-                            }
-                            
-                            final text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-                            if (text.length > maxLength) {
-                              return oldValue;
-                            }
-                            
-                            // Formata o número conforme digita
-                            final formattedText = _formatPhoneNumber(text);
-                            return TextEditingValue(
-                              text: formattedText,
-                              selection: TextSelection.collapsed(offset: formattedText.length),
-                            );
+                      
+                      const SizedBox(height: FutsallinkSpacing.lg),
+                      
+                      Center(
+                        child: CustomLink(
+                          text: 'Usar verificação por e-mail',
+                          onPressed: () {
+                            Navigator.of(context).pushReplacementNamed('/email-verification');
                           },
                         ),
-                      ],
-                      validator: _validatePhone,
-                    ),
-                    
-                    const SizedBox(height: FutsallinkSpacing.xl),
-                    PrimaryButton(
-                      text: 'ENVIAR CÓDIGO',
-                      isLoading: state is AuthLoading || _isSubmitting,
-                      onPressed: (state is AuthLoading || _isSubmitting)
-                          ? null
-                          : _initiateVerification,
-                    ),
-                    const SizedBox(height: FutsallinkSpacing.md),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('VOLTAR'),
-                    ),
-                    const SizedBox(height: FutsallinkSpacing.md),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacementNamed('/email-verification');
-                      },
-                      child: const Text('Usar verificação por e-mail'),
-                    ),
-                  ],
+                      ),
+                      const SizedBox(height: FutsallinkSpacing.lg),
+                    ],
+                  ),
                 ),
               ),
             ),
