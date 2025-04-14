@@ -38,11 +38,6 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FutsallinkColors.darkBackground,
-      appBar: AppBar(
-        title: const Text('Verificação de E-mail'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is EmailVerificationSentState) {
@@ -83,28 +78,23 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    CustomLogoHeader(
+                      showBackButton: true,
+                      onBackPressed: () => Navigator.of(context).pop(),
+                      bottomPadding: 60,
+                    ),
+                    
                     const SizedBox(height: FutsallinkSpacing.lg),
-                    Icon(
-                      Icons.email_outlined,
-                      size: 80,
-                      color: FutsallinkColors.primary,
+                    
+                    const ScreenTitle(
+                      text: 'Verificação de E-mail',
+                      bottomPadding: 8.0,
                     ),
-                    const SizedBox(height: FutsallinkSpacing.lg),
-                    Text(
-                      'Insira seu e-mail',
-                      style: FutsallinkTypography.headline1.copyWith(
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
+                    const SizedBox(height: FutsallinkSpacing.sm),
+                    const SubtitleText(
+                      text: 'Enviaremos um link de verificação para o seu e-mail',
                     ),
-                    const SizedBox(height: FutsallinkSpacing.md),
-                    Text(
-                      'Enviaremos um link de verificação para o seu e-mail',
-                      style: FutsallinkTypography.headline2.copyWith(
-                        color: Colors.white70,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+
                     const SizedBox(height: FutsallinkSpacing.xl),
                     CustomTextField(
                       controller: _emailController,
@@ -114,12 +104,15 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     ),
                     const SizedBox(height: FutsallinkSpacing.xl),
                     PrimaryButton(
-                      text: 'ENVIAR LINK DE VERIFICAÇÃO',
+                      text: 'ENVIAR',
                       isLoading: state is AuthLoading,
                       onPressed: state is AuthLoading || _isInProgress
                           ? null
                           : () {
                               if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  _isInProgress = true;
+                                });
                                 context.read<AuthBloc>().add(
                                       InitiateEmailVerificationEvent(
                                         email: _emailController.text.trim(),
@@ -128,19 +121,15 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                               }
                             },
                     ),
-                    const SizedBox(height: FutsallinkSpacing.md),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('VOLTAR'),
-                    ),
-                    const SizedBox(height: FutsallinkSpacing.md),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacementNamed('/phone-input');
-                      },
-                      child: const Text('Usar verificação por telefone'),
+                    const SizedBox(height: FutsallinkSpacing.lg),
+                    
+                    Center(
+                      child: CustomLink(
+                        text: 'Usar verificação por telefone',
+                        onPressed: () {
+                          Navigator.of(context).pushReplacementNamed('/phone-input');
+                        },
+                      ),
                     ),
                   ],
                 ),
