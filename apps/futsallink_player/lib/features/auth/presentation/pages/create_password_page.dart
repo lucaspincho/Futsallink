@@ -96,20 +96,13 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                         topPadding: 16.0,
                         bottomPadding: 60.0,
                       ),
-                      Text(
-                        'CRIE SUA SENHA',
-                        style: FutsallinkTypography.headline1.copyWith(
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.left,
+                      const ScreenTitle(
+                        text: 'CRIE SUA SENHA',
+                        bottomPadding: 8.0,
                       ),
                       const SizedBox(height: FutsallinkSpacing.sm),
-                      Text(
-                        'Defina uma senha segura para sua conta\ncom no mínimo 6 caracteres.',
-                        style: FutsallinkTypography.headline2.copyWith(
-                          color: Colors.white70,
-                        ),
-                        textAlign: TextAlign.left,
+                      const SubtitleText(
+                        text: 'Defina uma senha segura para sua conta com no mínimo 6 caracteres.',
                       ),
                       const SizedBox(height: 60),
                       CustomTextField(
@@ -153,7 +146,7 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                       ),
                       const SizedBox(height: 80),
                       PrimaryButton(
-                        text: 'FINALIZAR',
+                        text: 'CONFIRMAR',
                         isLoading: state is AuthLoading,
                         onPressed: state is AuthLoading
                             ? null
