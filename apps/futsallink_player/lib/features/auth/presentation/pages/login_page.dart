@@ -169,21 +169,32 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: FutsallinkSpacing.lg),
                     const CustomLogoHeader(),
                     const SizedBox(height: FutsallinkSpacing.xl),
-                    Text(
-                      'LOGIN',
-                      style: FutsallinkTypography.headline1.copyWith(
-                        color: Colors.white,
+                    
+                    // Título personalizado para a tela de login (maior e alinhado à esquerda)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        'LOGIN',
+                        style: const TextStyle(
+                          fontFamily: 'Unbounded',
+                          fontSize: 32, // Tamanho maior que o padrão
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.left,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                    Text(
-                      'Para acessar a plataforma coloque suas informações de login',
-                      style: FutsallinkTypography.headline2.copyWith(
-                        color: Colors.white70,
+                    
+                    // Subtítulo personalizado para a tela de login (alinhado à esquerda)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: Text(
+                        'Para acessar a plataforma coloque suas informações de login',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[400]),
+                        textAlign: TextAlign.left,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: FutsallinkSpacing.xl),
+                    
                     CustomTextField(
                       controller: _emailController,
                       hintText: 'E-mail ou telefone',
@@ -251,9 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           'Não tem uma conta? ',
-                          style: FutsallinkTypography.headline2.copyWith(
-                            color: Colors.white70,
-                          ),
+                          style: TextStyle(fontSize: 18, color: Colors.grey[400]),
                         ),
                         CustomLink(
                           text: 'Crie aqui',

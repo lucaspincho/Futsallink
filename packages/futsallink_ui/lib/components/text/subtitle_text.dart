@@ -12,7 +12,7 @@ class SubtitleText extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(fontSize: 18, color: Colors.grey[400]),
-        textAlign: TextAlign.center, // Para manter alinhado como nos seus designs
+        textAlign: TextAlign.center, // Revertido para centralizado
       ),
     );
   }
