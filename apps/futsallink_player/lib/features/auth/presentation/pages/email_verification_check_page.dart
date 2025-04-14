@@ -61,11 +61,6 @@ class _EmailVerificationCheckPageState extends State<EmailVerificationCheckPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FutsallinkColors.darkBackground,
-      appBar: AppBar(
-        title: const Text('Verificação de E-mail'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthErrorState) {
@@ -82,80 +77,67 @@ class _EmailVerificationCheckPageState extends State<EmailVerificationCheckPage>
           }
         },
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(FutsallinkSpacing.md),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Icon(
-                  Icons.mark_email_read,
-                  size: 80,
-                  color: FutsallinkColors.primary,
-                ),
-                const SizedBox(height: FutsallinkSpacing.lg),
-                Text(
-                  'Verifique seu e-mail',
-                  style: FutsallinkTypography.headline1.copyWith(
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: FutsallinkSpacing.md),
-                Text(
-                  'Enviamos um link de verificação para ${widget.email}',
-                  style: FutsallinkTypography.headline2.copyWith(
-                    color: Colors.white70,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: FutsallinkSpacing.md),
-                Text(
-                  'Clique no link para verificar seu e-mail e retorne a este aplicativo',
-                  style: FutsallinkTypography.headline2.copyWith(
-                    color: Colors.white70,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: FutsallinkSpacing.xl),
-                if (_isChecking || state is AuthLoading)
-                  const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                else
-                  Text(
-                    'Verificando automaticamente...',
-                    style: FutsallinkTypography.body1.copyWith(
-                      color: Colors.white54,
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(FutsallinkSpacing.md),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    CustomLogoHeader(
+                      showBackButton: true,
+                      onBackPressed: () => Navigator.pop(context),
+                      bottomPadding: 60,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                const SizedBox(height: FutsallinkSpacing.xl),
-                PrimaryButton(
-                  text: 'VERIFICAR AGORA',
-                  isLoading: _isChecking || state is AuthLoading,
-                  onPressed: (_isChecking || state is AuthLoading)
-                      ? null
-                      : () {
-                          setState(() {
-                            _isChecking = true;
-                          });
-                          context.read<AuthBloc>().add(
-                            CheckEmailVerificationEvent(email: widget.email),
-                          );
-                          setState(() {
-                            _isChecking = false;
-                          });
-                        },
+                    
+                    const SizedBox(height: FutsallinkSpacing.lg),
+                    
+                    const ScreenTitle(
+                      text: 'Verifique seu e-mail',
+                      bottomPadding: 8.0,
+                    ),
+                    const SizedBox(height: FutsallinkSpacing.sm),
+                    SubtitleText(
+                      text: 'Enviamos um link de verificação para ${widget.email}. Clique no link para verificar seu e-mail e retorne ao app.',
+                    ),
+                    
+                    const SizedBox(height: FutsallinkSpacing.xl * 2),
+                    
+                    if (_isChecking || state is AuthLoading)
+                      const Center(
+                        child: CircularProgressIndicator(
+                          color: FutsallinkColors.primary,
+                        ),
+                      )
+                    else
+                      Text(
+                        'Verificando automaticamente...',
+                        style: FutsallinkTypography.body1.copyWith(
+                          color: Colors.white54,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    const SizedBox(height: FutsallinkSpacing.xl),
+                    PrimaryButton(
+                      text: 'JÁ VERIFIQUEI',
+                      isLoading: _isChecking || state is AuthLoading,
+                      onPressed: (_isChecking || state is AuthLoading)
+                          ? null
+                          : () {
+                              setState(() {
+                                _isChecking = true;
+                              });
+                              context.read<AuthBloc>().add(
+                                CheckEmailVerificationEvent(email: widget.email),
+                              );
+                            },
+                    ),
+                    
+                    const SizedBox(height: FutsallinkSpacing.lg),
+                  ],
                 ),
-                const SizedBox(height: FutsallinkSpacing.md),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Voltar'),
-                ),
-              ],
+              ),
             ),
           );
         },
