@@ -59,8 +59,17 @@ class _ProfileCreationPageState extends State<ProfileCreationPage> {
           print("[ProfileCreationPage] BlocConsumer listener: estado ${state.runtimeType}");
           
           if (state is ProfileCreationSuccess) {
-            print("[ProfileCreationPage] Perfil criado com sucesso, redirecionando para home");
-            Navigator.of(context).pushReplacementNamed('/home');
+            print("[ProfileCreationPage] Estado ProfileCreationSuccess recebido.");
+            print("[ProfileCreationPage] Tentando navegar para /home...");
+            // Adicionar um pequeno delay para garantir que a build esteja completa
+            Future.delayed(Duration.zero, () {
+              if (mounted) {
+                Navigator.of(context).pushReplacementNamed('/home');
+                print("[ProfileCreationPage] Navegação para /home executada.");
+              } else {
+                print("[ProfileCreationPage] Widget não montado, navegação cancelada.");
+              }
+            });
           }
           
           if (state is ProfileCreationActive) {

@@ -421,11 +421,16 @@ class ProfileCreationCubit extends Cubit<ProfileCreationState> {
           updatedAt: DateTime.now(),
         );
         
+        print("[ProfileCreationCubit] Chamando createPlayerProfile...");
         final result = await createPlayerProfile(
           CreatePlayerProfileParams(player: updatedPlayer),
         );
+        print("[ProfileCreationCubit] Resultado de createPlayerProfile recebido.");
         
-        if (isClosed) return;
+        if (isClosed) {
+          print("[ProfileCreationCubit] Cubit fechado após createPlayerProfile.");
+          return;
+        }
         
         result.fold(
           (failure) {
@@ -435,9 +440,9 @@ class ProfileCreationCubit extends Cubit<ProfileCreationState> {
               errorMessage: failure.toString(),
             ));
           },
-          (success) {
-            print("[ProfileCreationCubit] Perfil criado com sucesso");
-            emit(ProfileCreationSuccess(updatedPlayer));
+          (successPlayer) { // Renomeado para evitar conflito
+            print("[ProfileCreationCubit] Perfil criado com sucesso no backend. Emitindo ProfileCreationSuccess.");
+            emit(ProfileCreationSuccess(updatedPlayer)); // Emitir o estado de sucesso com o player atualizado
           },
         );
       } catch (e) {
