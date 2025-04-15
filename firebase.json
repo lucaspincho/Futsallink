@@ -1,1 +1,32 @@
-{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"futsallink-project","configurations":{"android":"1:859865604977:android:110d99417d234073af0cd0","ios":"1:859865604977:ios:ac56c5187ed6b877af0cd0","macos":"1:859865604977:ios:04ed3570ec4b6283af0cd0","web":"1:859865604977:web:624437c122b91fbfaf0cd0","windows":"1:859865604977:web:7803b20e1bd9fa14af0cd0"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "futsallink-project",
+          "configurations": {
+            "android": "1:859865604977:android:110d99417d234073af0cd0",
+            "ios": "1:859865604977:ios:ac56c5187ed6b877af0cd0",
+            "macos": "1:859865604977:ios:04ed3570ec4b6283af0cd0",
+            "web": "1:859865604977:web:624437c122b91fbfaf0cd0",
+            "windows": "1:859865604977:web:7803b20e1bd9fa14af0cd0"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "apps/futsallink_player/build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
